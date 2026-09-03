@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #0A1626;
+  --ink-2: #122740;
+  --paper: #F3F5F2;
+  --paper-2: #E9EDE8;
+  --orange: #FF6A00;
+  --blue: #1B47C4;
+  --green: #0E5132;
+  --muted: #5C6B7A;
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --body: "Instrument Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--display);
+  letter-spacing: -0.03em;
+}

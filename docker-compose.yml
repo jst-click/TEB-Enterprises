@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: teb
+      POSTGRES_PASSWORD: tebpass
+      POSTGRES_DB: teb_enterprises
+    ports:
+      - "5432:5432"
+    volumes:
+      - teb_pg:/var/lib/postgresql/data
+
+volumes:
+  teb_pg:
