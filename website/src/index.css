@@ -359,11 +359,38 @@ footer a:hover{color:#FFA45C}
 .fchip img{width:96px}
 .fbot{border-top:1px solid var(--line-dark);padding:20px 0;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em}
 
+/* ============ FLOATING CONTACT ============ */
+.float-contact{
+  position:fixed;right:20px;bottom:24px;z-index:98;
+  display:flex;flex-direction:column;gap:12px;
+}
+.float-contact__btn{
+  width:54px;height:54px;border-radius:50%;
+  display:grid;place-items:center;color:#fff;text-decoration:none;
+  box-shadow:0 10px 28px -10px rgba(10,22,38,.55);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.float-contact__btn:hover{
+  transform:translateY(-3px) scale(1.04);
+  box-shadow:0 14px 32px -10px rgba(10,22,38,.6);
+}
+.float-contact__btn svg{width:26px;height:26px}
+.float-contact__btn--wa{background:#25D366}
+.float-contact__btn--wa:hover{background:#1ebe57}
+.float-contact__btn--call{background:var(--orange)}
+.float-contact__btn--call:hover{background:#e85f00}
+
 /* ============ MOBILE ACTION BAR ============ */
 .mobbar{position:fixed;bottom:0;left:0;right:0;z-index:99;display:none;gap:1px;background:var(--line-dark)}
 .mobbar a{flex:1;background:var(--ink);color:#fff;text-decoration:none;text-align:center;padding:15px 8px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
 .mobbar a.wa{background:var(--green)}
-@media(max-width:720px){.mobbar{display:flex}body{padding-bottom:52px}}
+@media(max-width:720px){
+  .mobbar{display:flex}
+  body{padding-bottom:52px}
+  .float-contact{bottom:68px;right:14px}
+  .float-contact__btn{width:48px;height:48px}
+  .float-contact__btn svg{width:22px;height:22px}
+}
 
 /* ============ REVEAL ============ */
 .rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
