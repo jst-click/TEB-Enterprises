@@ -1,4 +1,4 @@
-const API_BASE = ''
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
 export async function getNavFlags() {
   const res = await fetch(`${API_BASE}/api/nav-flags`)
@@ -39,6 +39,22 @@ export async function submitContact(payload) {
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.detail || 'Failed to submit enquiry')
   return data
+}
+
+export async function getPublicServices(params = {}) {
+  const qs = new URLSearchParams()
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== '') qs.set(k, String(v))
+  })
+  const res = await fetch(`${API_BASE}/api/services/public?${qs.toString()}`)
+  if (!res.ok) throw new Error('Failed to load services')
+  return res.json()
+}
+
+export async function getPublicService(slug) {
+  const res = await fetch(`${API_BASE}/api/services/public/${slug}`)
+  if (!res.ok) throw new Error('Service not found')
+  return res.json()
 }
 
 export function mediaUrl(path) {

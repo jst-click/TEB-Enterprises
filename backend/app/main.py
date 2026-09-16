@@ -2,12 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from sqlalchemy import text
+
 from .auth import hash_password
 from .config import settings
 from .database import Base, SessionLocal, engine
 from .models import Admin, SiteSettings
-from .routers import auth, blogs, contacts, gallery, nav, settings as settings_router, uploads
+from .routers import auth, blogs, contacts, gallery, nav, services, settings as settings_router, uploads
 from .routers.settings import DEFAULT_EMAIL, DEFAULT_WHATSAPP
+from .seed_services import seed_services as seed_services_data
 
 app = FastAPI(title="TEB Enterprises API", version="1.0.0")
 
@@ -29,6 +32,7 @@ app.include_router(uploads.router)
 app.include_router(nav.router)
 app.include_router(settings_router.router)
 app.include_router(contacts.router)
+app.include_router(services.router)
 
 
 def seed_admin() -> None:
@@ -62,11 +66,48 @@ def seed_settings() -> None:
         db.close()
 
 
+def seed_services() -> None:
+    db = SessionLocal()
+    try:
+        seed_services_data(db)
+    finally:
+        db.close()
+
+
+def ensure_schema() -> None:
+    columns = {
+        "cover_image": "VARCHAR(500)",
+        "scope_title": "VARCHAR(255)",
+        "about_eyebrow": "VARCHAR(120)",
+        "about_title": "VARCHAR(255)",
+        "about_image": "VARCHAR(500)",
+        "why_eyebrow": "VARCHAR(120)",
+        "why_title": "VARCHAR(255)",
+        "why_items": "TEXT",
+        "process_eyebrow": "VARCHAR(120)",
+        "process_title": "VARCHAR(255)",
+        "process_items": "TEXT",
+        "gallery_images": "TEXT",
+        "related_eyebrow": "VARCHAR(120)",
+        "related_title": "VARCHAR(255)",
+        "faq_eyebrow": "VARCHAR(120)",
+        "faq_title": "VARCHAR(255)",
+        "faq_items": "TEXT",
+        "cta_title": "VARCHAR(255)",
+        "cta_text": "TEXT",
+    }
+    with engine.begin() as conn:
+        for name, col_type in columns.items():
+            conn.execute(text(f"ALTER TABLE services ADD COLUMN IF NOT EXISTS {name} {col_type}"))
+
+
 @app.on_event("startup")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
+    ensure_schema()
     seed_admin()
     seed_settings()
+    seed_services()
 
 
 @app.get("/api/health")

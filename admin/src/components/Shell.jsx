@@ -11,6 +11,7 @@ export function AdminShell() {
   const navigate = useNavigate()
   const links = [
     ['/', 'Dashboard'],
+    ['/services', 'Services'],
     ['/gallery', 'Gallery'],
     ['/blogs', 'Blogs'],
     ['/contacts', 'Contacts'],
@@ -51,7 +52,7 @@ export function AdminShell() {
               Website
             </p>
             <a
-              href="http://localhost:5173"
+              href={import.meta.env.VITE_WEBSITE_URL || 'http://localhost:5173'}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-white/80 hover:text-white no-underline"

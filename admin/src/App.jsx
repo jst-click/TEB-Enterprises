@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import GalleryAdmin from './pages/GalleryAdmin'
 import BlogsAdmin from './pages/BlogsAdmin'
+import ServicesListPage, { ServiceEditPage } from './pages/ServicesAdmin'
 import ContactsPage from './pages/ContactsPage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -15,6 +16,9 @@ export default function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AdminShell />}>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/services" element={<ServicesListPage />} />
+            <Route path="/services/new" element={<ServiceEditPage />} />
+            <Route path="/services/:id/edit" element={<ServiceEditPage />} />
             <Route path="/gallery" element={<GalleryAdmin />} />
             <Route path="/blogs" element={<BlogsAdmin />} />
             <Route path="/contacts" element={<ContactsPage />} />

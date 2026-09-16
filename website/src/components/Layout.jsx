@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { getNavFlags } from '../api'
+import { EnquiryProvider, useEnquiry } from '../context/EnquiryContext'
 import { SITE } from '../data/content'
 import { useScrollChrome } from '../hooks'
+import EnquiryModal from './EnquiryModal'
 
 const ANCHORS = [
   { href: '/#pests', label: 'Pests' },
-  { href: '/#services', label: 'Services' },
+  { href: '/services', label: 'Services', route: true },
   { href: '/#sectors', label: 'Sectors' },
   { href: '/#ipm', label: 'IPM' },
   { href: '/#process', label: 'Process' },
@@ -15,11 +17,12 @@ const ANCHORS = [
   { href: '/#faq', label: 'FAQ' },
 ]
 
-export default function Layout({ children }) {
+function LayoutInner({ children }) {
   const { stuck, progress } = useScrollChrome()
   const [open, setOpen] = useState(false)
   const [navFlags, setNavFlags] = useState({ show_gallery: false, show_blogs: false })
   const location = useLocation()
+  const { openEnquiry } = useEnquiry()
 
   useEffect(() => {
     getNavFlags().then(setNavFlags).catch(() => {})
@@ -62,20 +65,26 @@ export default function Layout({ children }) {
             </div>
           </Link>
           <nav className="navlinks">
-            {ANCHORS.map((l) => (
-              <a key={l.href} href={l.href}>
-                {l.label}
-              </a>
-            ))}
+            {ANCHORS.map((l) =>
+              l.route ? (
+                <NavLink key={l.href} to={l.href}>
+                  {l.label}
+                </NavLink>
+              ) : (
+                <a key={l.href} href={l.href}>
+                  {l.label}
+                </a>
+              ),
+            )}
             {dynamicLinks.map((l) => (
               <NavLink key={l.href} to={l.href}>
                 {l.label}
               </NavLink>
             ))}
           </nav>
-          <a className="btn btn--orange" href="/#contact">
+          <button type="button" className="btn btn--orange" onClick={() => openEnquiry()}>
             Book an inspection <span className="arw">→</span>
-          </a>
+          </button>
           <button
             className={`burger${open ? ' open' : ''}`}
             aria-label="Open menu"
@@ -90,19 +99,32 @@ export default function Layout({ children }) {
         </div>
         <div className={`drawer${open ? ' show' : ''}`}>
           <div className="wrap">
-            {ANCHORS.map((l) => (
-              <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
-                {l.label}
-              </a>
-            ))}
+            {ANCHORS.map((l) =>
+              l.route ? (
+                <Link key={l.href} to={l.href} onClick={() => setOpen(false)}>
+                  {l.label}
+                </Link>
+              ) : (
+                <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
+                  {l.label}
+                </a>
+              ),
+            )}
             {dynamicLinks.map((l) => (
               <Link key={l.href} to={l.href} onClick={() => setOpen(false)}>
                 {l.label}
               </Link>
             ))}
-            <a className="btn btn--orange" href="/#contact" onClick={() => setOpen(false)}>
+            <button
+              type="button"
+              className="btn btn--orange"
+              onClick={() => {
+                setOpen(false)
+                openEnquiry()
+              }}
+            >
               Book an inspection
-            </a>
+            </button>
           </div>
         </div>
       </header>
@@ -212,8 +234,18 @@ export default function Layout({ children }) {
         <a className="wa" href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer">
           WhatsApp
         </a>
-        <a href="/#contact">Get a quote</a>
+        <button type="button" onClick={() => openEnquiry()}>Get a quote</button>
       </nav>
+
+      <EnquiryModal />
     </>
+  )
+}
+
+export default function Layout({ children }) {
+  return (
+    <EnquiryProvider>
+      <LayoutInner>{children}</LayoutInner>
+    </EnquiryProvider>
   )
 }
