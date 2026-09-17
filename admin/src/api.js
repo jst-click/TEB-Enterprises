@@ -27,18 +27,26 @@ async function request(path, { method = 'GET', body, formData, auth = true } = {
     body: formData || (body ? JSON.stringify(body) : undefined),
   })
 
+  const data = res.status === 204 ? null : await res.json().catch(() => ({}))
+
   if (res.status === 401) {
-    clearToken()
-    if (!window.location.pathname.includes('/login')) {
+    const detail = data?.detail
+    const message = Array.isArray(detail)
+      ? detail.map((d) => d.msg || JSON.stringify(d)).join(', ')
+      : detail || 'Could not validate credentials'
+
+    // Keep session redirect for protected routes, but preserve login error text.
+    const onLoginPage = window.location.pathname.includes('/login')
+    if (!onLoginPage) {
+      clearToken()
       window.location.href = '/login'
     }
-    throw new Error('Could not validate credentials')
+    throw new Error(message)
   }
 
   if (res.status === 204) return null
-  const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    const detail = data.detail
+    const detail = data?.detail
     const message = Array.isArray(detail)
       ? detail.map((d) => d.msg || JSON.stringify(d)).join(', ')
       : detail || 'Request failed'
@@ -78,6 +86,11 @@ export const api = {
   settings: {
     get: () => request('/api/settings/'),
     update: (payload) => request('/api/settings/', { method: 'PUT', body: payload }),
+  },
+  homepage: {
+    list: () => request('/api/homepage/'),
+    get: (key) => request(`/api/homepage/${key}`),
+    update: (key, payload) => request(`/api/homepage/${key}`, { method: 'PUT', body: payload }),
   },
   upload: async (file) => {
     const fd = new FormData()

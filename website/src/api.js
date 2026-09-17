@@ -57,6 +57,12 @@ export async function getPublicService(slug) {
   return res.json()
 }
 
+export async function getPublicHomepage() {
+  const res = await fetch(`${API_BASE}/api/homepage/public`)
+  if (!res.ok) throw new Error('Failed to load homepage')
+  return res.json()
+}
+
 export function mediaUrl(path) {
   if (!path) return ''
   if (path.startsWith('http')) return path

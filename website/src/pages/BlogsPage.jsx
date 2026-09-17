@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getPublicBlog, getPublicBlogs, mediaUrl } from '../api'
 import { useReveal } from '../hooks'
+import NotFound from './NotFound'
 
 export function BlogsPage() {
   const [items, setItems] = useState([])
@@ -73,14 +74,7 @@ export function BlogDetailPage() {
   }, [slug])
 
   if (error) {
-    return (
-      <section style={{ paddingTop: 72 }}>
-        <div className="wrap">
-          <p className="lede">{error}</p>
-          <Link className="btn btn--orange" to="/blogs">Back to blogs</Link>
-        </div>
-      </section>
-    )
+    return <NotFound />
   }
 
   if (!post) {

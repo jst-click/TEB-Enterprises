@@ -1,36 +1,55 @@
-import { SITE, TICKER, STATS } from '../data/content'
+import { SITE } from '../data/content'
+import { useHomeSection } from '../context/HomeContent'
+import Html from './Html'
+
+const HERO_FALLBACK = {
+  eyebrow: 'Pest control in Bengaluru · B2B & B2C',
+  title_line1: 'Safe spaces.',
+  title_line2: 'Expert protection.',
+  title_line3: 'Lasting results.',
+  lede:
+    "We don't just spray. Every job starts with an inspection — finding where pests enter, where they breed, and what keeps bringing them back. Then we treat, monitor and prevent.",
+  primary_cta: 'Get a free site inspection',
+  pills: [
+    'Homes & apartments',
+    'Offices & IT parks',
+    'Hotels & kitchens',
+    'Factories & warehouses',
+    'Hospitals & schools',
+  ],
+  nodes: ['Inspect & identify', 'Targeted treatment', 'Monitor & prevent'],
+  core_label: 'Perimeter protected',
+}
 
 export function Hero() {
+  const { data } = useHomeSection('hero', HERO_FALLBACK)
+  const nodes = data.nodes?.length ? data.nodes : HERO_FALLBACK.nodes
+
   return (
     <section className="hero" id="top">
       <div className="wrap">
         <div>
-          <p className="eyebrow">Pest control in Bengaluru · B2B &amp; B2C</p>
+          <p className="eyebrow">{data.eyebrow}</p>
           <h1>
-            Safe spaces.
+            {data.title_line1}
             <br />
-            <span className="l2">Expert protection.</span>
+            <span className="l2">{data.title_line2}</span>
             <br />
-            <span className="l3">Lasting results.</span>
+            <span className="l3">{data.title_line3}</span>
           </h1>
-          <p className="lede">
-            We don&apos;t just spray. Every job starts with an inspection — finding where pests enter,
-            where they breed, and what keeps bringing them back. Then we treat, monitor and prevent.
-          </p>
+          <Html as="div" className="lede" html={data.lede} />
           <div className="hero-cta">
             <a className="btn btn--orange" href="#contact">
-              Get a free site inspection <span className="arw">→</span>
+              {data.primary_cta} <span className="arw">→</span>
             </a>
             <a className="btn btn--ghost" href={SITE.phoneHref}>
               Call {SITE.phone}
             </a>
           </div>
           <div className="pill-row">
-            <span className="pill">Homes &amp; apartments</span>
-            <span className="pill">Offices &amp; IT parks</span>
-            <span className="pill">Hotels &amp; kitchens</span>
-            <span className="pill">Factories &amp; warehouses</span>
-            <span className="pill">Hospitals &amp; schools</span>
+            {(data.pills || []).map((pill) => (
+              <span className="pill" key={pill}>{pill}</span>
+            ))}
           </div>
         </div>
 
@@ -47,11 +66,11 @@ export function Hero() {
           </svg>
           <div className="perimeter-core">
             <img src="/logo.png" alt="TEB Enterprises" />
-            <div className="st">Perimeter protected</div>
+            <div className="st">{data.core_label}</div>
           </div>
-          <div className="node n1"><i>01</i> Inspect &amp; identify</div>
-          <div className="node n2"><i>02</i> Targeted treatment</div>
-          <div className="node n3"><i>03</i> Monitor &amp; prevent</div>
+          {nodes[0] && <div className="node n1"><i>01</i> {nodes[0]}</div>}
+          {nodes[1] && <div className="node n2"><i>02</i> {nodes[1]}</div>}
+          {nodes[2] && <div className="node n3"><i>03</i> {nodes[2]}</div>}
         </div>
       </div>
     </section>
@@ -59,7 +78,9 @@ export function Hero() {
 }
 
 export function Ticker() {
-  const items = [...TICKER, ...TICKER]
+  const { data } = useHomeSection('ticker', { items: [] })
+  const base = data.items?.length ? data.items : ['Inspection-based treatment', 'Bengaluru-wide coverage']
+  const items = [...base, ...base]
   return (
     <div className="ticker" aria-hidden="true">
       <div className="ticker-track">
@@ -72,11 +93,21 @@ export function Ticker() {
 }
 
 export function Stats() {
+  const { data } = useHomeSection('stats', { items: [] })
+  const items = data.items?.length
+    ? data.items
+    : [
+        { value: 20, label: 'Pest programmes' },
+        { value: 13, label: 'Sectors served' },
+        { value: 27, label: 'Bengaluru zones covered' },
+        { value: 8, label: 'Step service process' },
+      ]
+
   return (
     <section style={{ paddingTop: 'clamp(48px,6vw,80px)' }}>
       <div className="wrap">
         <div className="stats rv">
-          {STATS.map((s) => (
+          {items.map((s) => (
             <div className="stat" key={s.label}>
               <b data-count={s.value}>0</b>
               <span>{s.label}</span>

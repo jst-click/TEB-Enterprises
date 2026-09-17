@@ -8,8 +8,9 @@ from .auth import hash_password
 from .config import settings
 from .database import Base, SessionLocal, engine
 from .models import Admin, SiteSettings
-from .routers import auth, blogs, contacts, gallery, nav, services, settings as settings_router, uploads
+from .routers import auth, blogs, contacts, gallery, homepage, nav, seo, services, settings as settings_router, uploads
 from .routers.settings import DEFAULT_EMAIL, DEFAULT_WHATSAPP
+from .seed_homepage import seed_homepage as seed_homepage_data
 from .seed_services import seed_services as seed_services_data
 
 app = FastAPI(title="TEB Enterprises API", version="1.0.0")
@@ -33,6 +34,8 @@ app.include_router(nav.router)
 app.include_router(settings_router.router)
 app.include_router(contacts.router)
 app.include_router(services.router)
+app.include_router(homepage.router)
+app.include_router(seo.router)
 
 
 def seed_admin() -> None:
@@ -74,6 +77,14 @@ def seed_services() -> None:
         db.close()
 
 
+def seed_homepage() -> None:
+    db = SessionLocal()
+    try:
+        seed_homepage_data(db)
+    finally:
+        db.close()
+
+
 def ensure_schema() -> None:
     columns = {
         "cover_image": "VARCHAR(500)",
@@ -108,6 +119,7 @@ def on_startup() -> None:
     seed_admin()
     seed_settings()
     seed_services()
+    seed_homepage()
 
 
 @app.get("/api/health")

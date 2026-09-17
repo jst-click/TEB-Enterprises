@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getPublicServices } from '../api'
 import { B2B_SERVICES, B2C_SERVICES } from '../data/content'
+import { useHomeSection } from '../context/HomeContent'
+import Html from './Html'
 
 function Card({ code, title, text, featured, to }) {
   const inner = (
@@ -91,16 +93,22 @@ export default function Services() {
     ? (b2c.length ? b2c : fallbackB2c)
     : (b2b.length ? b2b : fallbackB2b)
 
+  const { data: intro } = useHomeSection('services', {
+    eyebrow: 'Services',
+    title: 'Built for your home. Built for your business.',
+    lede: 'One-time treatments, scheduled programmes and annual contracts — matched to your property, occupancy and pest risk.',
+    tab_b2c: 'For homes (B2C)',
+    tab_b2b: 'For businesses (B2B)',
+    view_all: 'View all services',
+  })
+
   return (
     <section id="services">
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow">Services</p>
-          <h2>Built for your home. Built for your business.</h2>
-          <p className="lede">
-            One-time treatments, scheduled programmes and annual contracts — matched to your
-            property, occupancy and pest risk.
-          </p>
+          <p className="eyebrow">{intro.eyebrow}</p>
+          <h2>{intro.title}</h2>
+          <Html as="div" className="lede" html={intro.lede} />
         </div>
 
         <div
@@ -116,14 +124,14 @@ export default function Services() {
         >
           <div className="seg" role="tablist" style={{ margin: 0 }}>
             <button type="button" className={tab === 'b2c' ? 'active' : ''} onClick={() => setTab('b2c')}>
-              For homes (B2C)
+              {intro.tab_b2c}
             </button>
             <button type="button" className={tab === 'b2b' ? 'active' : ''} onClick={() => setTab('b2b')}>
-              For businesses (B2B)
+              {intro.tab_b2b}
             </button>
           </div>
           <Link className="btn btn--ghost" to="/services">
-            View all services <span className="arw">→</span>
+            {intro.view_all} <span className="arw">→</span>
           </Link>
         </div>
 

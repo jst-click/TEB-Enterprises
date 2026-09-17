@@ -230,3 +230,24 @@ class ServiceOut(ServiceBase):
 
     class Config:
         from_attributes = True
+
+
+class HomepageSectionOut(BaseModel):
+    id: int
+    key: str
+    label: str
+    sort_order: int
+    data: dict
+    updated_at: datetime | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class HomepageSectionUpdate(BaseModel):
+    label: str | None = None
+    data: dict
+
+
+class HomepagePublic(BaseModel):
+    sections: dict[str, dict]

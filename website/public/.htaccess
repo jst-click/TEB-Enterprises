@@ -1,0 +1,25 @@
+# TEB pest control — force HTTPS + non-www (Apache / shared hosting)
+# Place in the site document root as `.htaccess` (or merge with existing rules).
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # http://www → https://apex
+  RewriteCond %{HTTP_HOST} ^www\.tebpestcontrol\.com$ [NC]
+  RewriteRule ^ https://tebpestcontrol.com%{REQUEST_URI} [L,R=301]
+
+  # http://apex → https://apex
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP_HOST} ^tebpestcontrol\.com$ [NC]
+  RewriteRule ^ https://tebpestcontrol.com%{REQUEST_URI} [L,R=301]
+
+  # https://www → https://apex
+  RewriteCond %{HTTPS} =on
+  RewriteCond %{HTTP_HOST} ^www\.tebpestcontrol\.com$ [NC]
+  RewriteRule ^ https://tebpestcontrol.com%{REQUEST_URI} [L,R=301]
+
+  # SPA fallback
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 
-export function useReveal() {
+export function useReveal(ready = true) {
   useEffect(() => {
+    if (!ready) return undefined
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((en) => {
@@ -15,11 +16,12 @@ export function useReveal() {
     )
     document.querySelectorAll('.rv').forEach((el) => io.observe(el))
     return () => io.disconnect()
-  }, [])
+  }, [ready])
 }
 
-export function useCountUp() {
+export function useCountUp(ready = true) {
   useEffect(() => {
+    if (!ready) return undefined
     const cio = new IntersectionObserver(
       (entries) => {
         entries.forEach((en) => {
@@ -41,7 +43,7 @@ export function useCountUp() {
     )
     document.querySelectorAll('[data-count]').forEach((el) => cio.observe(el))
     return () => cio.disconnect()
-  }, [])
+  }, [ready])
 }
 
 export function useScrollChrome() {

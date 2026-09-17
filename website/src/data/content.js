@@ -12,6 +12,10 @@ export const SITE = {
   gstin: '29AXXPG2780R1Z9',
   contactPerson: 'Mr. Nanda Kumar',
   hours: 'Mon–Sun, 8:00 AM – 8:00 PM',
+  social: {
+    facebook: 'https://www.facebook.com/tebenterprises/?locale=fr_FR',
+    instagram: 'https://www.instagram.com/tebenterprises1/',
+  },
 }
 
 export const TICKER = [

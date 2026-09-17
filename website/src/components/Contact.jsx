@@ -1,26 +1,32 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getPublicSettings, submitContact } from '../api'
 import { AREAS, FAQS, PEST_OPTIONS, PROPERTY_TYPES, SITE } from '../data/content'
+import { useHomeSection } from '../context/HomeContent'
+import Html from './Html'
 
 export function Areas() {
+  const { data } = useHomeSection('areas', {
+    eyebrow: 'Service areas',
+    title: 'Across Bengaluru.',
+    lede: '',
+    items: AREAS,
+    other_label: 'Other Bengaluru locations',
+  })
   const [q, setQ] = useState('')
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
-    const base = [...AREAS, 'Other Bengaluru locations']
+    const base = [...(data.items || AREAS), data.other_label || 'Other Bengaluru locations']
     if (!query) return base
     return base.filter((a) => a.toLowerCase().includes(query))
-  }, [q])
+  }, [q, data.items, data.other_label])
 
   return (
     <section id="areas">
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow">Service areas</p>
-          <h2>Across Bengaluru.</h2>
-          <p className="lede">
-            Search your locality below. Service availability is subject to location, site
-            requirements and scheduling — call us to confirm.
-          </p>
+          <p className="eyebrow">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
+          <Html as="div" className="lede" html={data.lede} />
         </div>
         <div className="search rv">
           <input
@@ -50,30 +56,36 @@ export function Areas() {
 }
 
 export function FAQ() {
+  const { data } = useHomeSection('faq', {
+    eyebrow: 'Questions',
+    title: 'Straight answers.',
+    items: FAQS.map(([q, a]) => ({ q, a: `<p>${a}</p>` })),
+  })
   const [open, setOpen] = useState(null)
+  const items = data.items?.length ? data.items : FAQS.map(([q, a]) => ({ q, a }))
 
   return (
     <section id="faq" style={{ background: 'var(--white)', borderBlock: '1px solid var(--line-soft)' }}>
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow">Questions</p>
-          <h2>Straight answers.</h2>
+          <p className="eyebrow">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
         </div>
         <div className="acc rv">
-          {FAQS.map(([q, a], i) => {
+          {items.map((item, i) => {
             const isOpen = open === i
             return (
-              <div className={`acc-item${isOpen ? ' open' : ''}`} key={q}>
+              <div className={`acc-item${isOpen ? ' open' : ''}`} key={item.q}>
                 <button
                   className="acc-q"
                   type="button"
                   aria-expanded={isOpen}
                   onClick={() => setOpen(isOpen ? null : i)}
                 >
-                  {q}
+                  {item.q}
                 </button>
-                <div className="acc-a" style={{ maxHeight: isOpen ? 400 : 0 }}>
-                  <p>{a}</p>
+                <div className="acc-a" style={{ maxHeight: isOpen ? 500 : 0 }}>
+                  <Html as="div" html={item.a} />
                 </div>
               </div>
             )
@@ -85,6 +97,18 @@ export function FAQ() {
 }
 
 export function Contact() {
+  const { data: copy } = useHomeSection('contact', {
+    eyebrow: 'Get started',
+    title: 'Book an inspection and get a quotation.',
+    lede: '',
+    aside_title: 'Talk to us directly',
+    aside_text: '',
+    property_types: PROPERTY_TYPES,
+    pest_options: PEST_OPTIONS,
+  })
+  const propertyTypes = copy.property_types?.length ? copy.property_types : PROPERTY_TYPES
+  const pestOptions = copy.pest_options?.length ? copy.pest_options : PEST_OPTIONS
+
   const [form, setForm] = useState({
     name: '',
     mobile: '',
@@ -101,6 +125,18 @@ export function Contact() {
     contact_email: SITE.salesEmail,
   })
   const [sending, setSending] = useState(false)
+
+  useEffect(() => {
+    if (propertyTypes[0] && !propertyTypes.includes(form.type)) {
+      setForm((f) => ({ ...f, type: propertyTypes[0] }))
+    }
+  }, [propertyTypes, form.type])
+
+  useEffect(() => {
+    if (pestOptions[0] && !pestOptions.includes(form.pest)) {
+      setForm((f) => ({ ...f, pest: pestOptions[0] }))
+    }
+  }, [pestOptions, form.pest])
 
   useEffect(() => {
     getPublicSettings()
@@ -184,24 +220,18 @@ export function Contact() {
   }
 
   return (
-    <section id="contact">
+    <section id="contact" className="contact-sec">
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow">Get started</p>
-          <h2>Book an inspection and get a quotation.</h2>
-          <p className="lede">
-            Cockroaches, termites, bedbugs, mosquitoes, rodents, flies, ants — tell us what
-            you&apos;re dealing with and we&apos;ll come and look.
-          </p>
+          <p className="eyebrow on-dark">{copy.eyebrow}</p>
+          <h2>{copy.title}</h2>
+          <Html as="div" className="lede" html={copy.lede} />
         </div>
 
         <div className="contact-grid">
           <div className="rv">
-            <h3>Talk to us directly</h3>
-            <p style={{ color: 'var(--muted)', fontSize: '.96rem', marginTop: 10 }}>
-              Share your property location, type, approximate size and the pest problem. Photos or
-              videos help us assess faster.
-            </p>
+            <h3>{copy.aside_title}</h3>
+            <Html as="div" className="contact-sec__hint" html={copy.aside_text} />
             <div className="cinfo">
               <div><span>Contact person</span><p>{SITE.contactPerson}</p></div>
               <div>
@@ -261,7 +291,7 @@ export function Contact() {
               <div className="field">
                 <label htmlFor="f-type">Property type</label>
                 <select id="f-type" value={form.type} onChange={set('type')}>
-                  {PROPERTY_TYPES.map((t) => (
+                  {propertyTypes.map((t) => (
                     <option key={t}>{t}</option>
                   ))}
                 </select>
@@ -275,7 +305,7 @@ export function Contact() {
               <div className="field">
                 <label htmlFor="f-pest">Pest problem</label>
                 <select id="f-pest" value={form.pest} onChange={set('pest')}>
-                  {PEST_OPTIONS.map((t) => (
+                  {pestOptions.map((t) => (
                     <option key={t}>{t}</option>
                   ))}
                 </select>
@@ -319,15 +349,18 @@ export function Contact() {
 }
 
 export function Band() {
+  const { data } = useHomeSection('band', {
+    title: 'Keep your property protected from pests.',
+    lede: 'From homes and apartments to offices, factories, hospitals, hotels, restaurants and warehouses — customised pest-control solutions for every environment.',
+    secondary_cta: 'Request a site inspection',
+  })
+
   return (
     <section className="band">
       <div className="wrap rv">
-        <h2>Keep your property protected from pests.</h2>
-        <p>
-          From homes and apartments to offices, factories, hospitals, hotels, restaurants and
-          warehouses — customised pest-control solutions for every environment.
-        </p>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <h2>{data.title}</h2>
+        <Html as="div" html={data.lede} />
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 30 }}>
           <a className="btn btn--onDark" href={SITE.phoneHref}>
             Call now: {SITE.phone}
           </a>
@@ -336,7 +369,7 @@ export function Band() {
             href="#contact"
             style={{ background: 'transparent', borderColor: 'rgba(255,255,255,.6)', color: '#fff' }}
           >
-            Request a site inspection
+            {data.secondary_cta}
           </a>
         </div>
       </div>

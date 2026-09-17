@@ -1,32 +1,40 @@
-import { AMC_TAGS, AMC_WHY, IPM_STEPS, PROCESS, SAFETY, SECTORS } from '../data/content'
 import { useState } from 'react'
+import { AMC_TAGS, AMC_WHY, IPM_STEPS, PROCESS, SAFETY, SECTORS } from '../data/content'
+import { useHomeSection } from '../context/HomeContent'
+import Html from './Html'
 
 export function Sectors() {
+  const { data } = useHomeSection('sectors', {
+    eyebrow: 'Sectors',
+    title: 'Pest control for every kind of building.',
+    lede: '',
+    cta_kicker: 'YOUR FACILITY',
+    cta_title: "Not on the list? Most buildings aren't so different underneath.",
+    cta_label: 'Tell us about your site',
+    items: SECTORS.map(([code, title, text]) => ({ code, title, text: `<p>${text}</p>` })),
+  })
+
   return (
     <section className="dark" id="sectors">
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow on-dark">Sectors</p>
-          <h2>Pest control for every kind of building.</h2>
-          <p className="lede">
-            A restaurant kitchen and a record room don&apos;t have the same pest risk — or the same
-            tolerance for disruption. We plan the programme around the building, not the other way
-            round.
-          </p>
+          <p className="eyebrow on-dark">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
+          <Html as="div" className="lede" html={data.lede} />
         </div>
         <div className="sectors rv">
-          {SECTORS.map(([k, title, text]) => (
-            <div className="sector" key={k}>
-              <span className="k">{k}</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
+          {(data.items || []).map((item) => (
+            <div className="sector" key={item.code || item.title}>
+              <span className="k">{item.code}</span>
+              <h3>{item.title}</h3>
+              <Html as="div" html={item.text} />
             </div>
           ))}
           <div className="sector sector--cta">
-            <span className="k">YOUR FACILITY</span>
-            <h3>Not on the list? Most buildings aren&apos;t so different underneath.</h3>
+            <span className="k">{data.cta_kicker}</span>
+            <h3>{data.cta_title}</h3>
             <a className="btn btn--orange" href="#contact">
-              Tell us about your site <span className="arw">→</span>
+              {data.cta_label} <span className="arw">→</span>
             </a>
           </div>
         </div>
@@ -36,28 +44,32 @@ export function Sectors() {
 }
 
 export function IPM() {
+  const { data } = useHomeSection('ipm', {
+    eyebrow: 'Integrated Pest Management',
+    title: 'Fewer chemicals. Better questions.',
+    lede: '',
+    cta_label: 'Discuss an IPM programme',
+    items: IPM_STEPS.map(([label, title, text]) => ({ label, title, text: `<p>${text}</p>` })),
+  })
+
   return (
     <section id="ipm">
       <div className="wrap ipm">
         <div className="rv">
-          <p className="eyebrow">Integrated Pest Management</p>
-          <h2>Fewer chemicals. Better questions.</h2>
-          <p className="lede" style={{ marginTop: 18 }}>
-            Repeated spraying treats what you can see. IPM asks why pests are entering, where
-            they&apos;re breeding, what conditions support them — and how those conditions can be
-            corrected.
-          </p>
+          <p className="eyebrow">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
+          <Html as="div" className="lede" html={data.lede} style={{ marginTop: 18 }} />
           <a className="btn" href="#contact" style={{ marginTop: 12 }}>
-            Discuss an IPM programme <span className="arw">→</span>
+            {data.cta_label} <span className="arw">→</span>
           </a>
         </div>
         <div className="ipm-list rv">
-          {IPM_STEPS.map(([k, title, text]) => (
-            <div className="ipm-item" key={k}>
-              <span className="k">{k}</span>
+          {(data.items || []).map((item) => (
+            <div className="ipm-item" key={item.label}>
+              <span className="k">{item.label}</span>
               <div>
-                <strong>{title}</strong>
-                <p>{text}</p>
+                <strong>{item.title}</strong>
+                <Html as="div" html={item.text} />
               </div>
             </div>
           ))}
@@ -68,19 +80,26 @@ export function IPM() {
 }
 
 export function Process() {
+  const { data } = useHomeSection('process', {
+    eyebrow: 'How we work',
+    title: 'Eight steps, in this order, every time.',
+    items: PROCESS.map(([step, title, text]) => ({ step, title, text: `<p>${text}</p>` })),
+  })
+
   return (
     <section id="process" style={{ background: 'var(--paper-2)' }}>
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow">How we work</p>
-          <h2>Eight steps, in this order, every time.</h2>
+          <p className="eyebrow">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
+          {data.lede ? <Html as="div" className="lede" html={data.lede} /> : null}
         </div>
         <div className="steps rv">
-          {PROCESS.map(([n, title, text]) => (
-            <div className="step" key={n}>
-              <span className="n">{n}</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
+          {(data.items || []).map((item) => (
+            <div className="step" key={item.step}>
+              <span className="n">{item.step}</span>
+              <h3>{item.title}</h3>
+              <Html as="div" html={item.text} />
             </div>
           ))}
         </div>
@@ -90,33 +109,40 @@ export function Process() {
 }
 
 export function AMC() {
+  const { data } = useHomeSection('amc', {
+    eyebrow: 'Annual Maintenance Contracts',
+    title: 'Catch it early, or clear it later.',
+    lede: '',
+    box_title: 'What an AMC can include',
+    why_title: 'Why clients keep them',
+    tags: AMC_TAGS,
+    why: AMC_WHY,
+  })
+
   return (
     <section id="amc">
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow">Annual Maintenance Contracts</p>
-          <h2>Catch it early, or clear it later.</h2>
-          <p className="lede">
-            Regular service finds pest activity while it&apos;s still small. AMCs are built around
-            your property size, pest risk, service frequency and business requirements.
-          </p>
+          <p className="eyebrow">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
+          <Html as="div" className="lede" html={data.lede} />
         </div>
         <div className="amc rv">
           <div className="amc-box">
-            <h3>What an AMC can include</h3>
+            <h3>{data.box_title}</h3>
             <p style={{ color: 'var(--muted)', fontSize: '.95rem', marginTop: 10 }}>
               Choose the frequency and the pest scope — we&apos;ll write the plan around it.
             </p>
             <div className="tags">
-              {AMC_TAGS.map((t) => (
+              {(data.tags || []).map((t) => (
                 <span className="tag" key={t}>{t}</span>
               ))}
             </div>
           </div>
           <div className="amc-box dark-box">
-            <h3>Why clients keep them</h3>
+            <h3>{data.why_title}</h3>
             <ul className="checks">
-              {AMC_WHY.map((t) => (
+              {(data.why || []).map((t) => (
                 <li key={t}>{t}</li>
               ))}
             </ul>
@@ -128,23 +154,30 @@ export function AMC() {
 }
 
 export function Safety() {
+  const { data } = useHomeSection('safety', {
+    eyebrow: 'Safety & responsible service',
+    title: 'What we need from you, and what you can expect from us.',
+    lede: '',
+    tabs: ['Before service', 'After service', 'Tell us in advance'],
+    pre: SAFETY.pre,
+    post: SAFETY.post,
+    tell: SAFETY.tell,
+  })
   const [tab, setTab] = useState('pre')
   const labels = [
-    ['pre', 'Before service'],
-    ['post', 'After service'],
-    ['tell', 'Tell us in advance'],
+    ['pre', data.tabs?.[0] || 'Before service'],
+    ['post', data.tabs?.[1] || 'After service'],
+    ['tell', data.tabs?.[2] || 'Tell us in advance'],
   ]
+  const groups = data[tab] || []
 
   return (
     <section className="dark" id="safety">
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow on-dark">Safety &amp; responsible service</p>
-          <h2>What we need from you, and what you can expect from us.</h2>
-          <p className="lede">
-            Before service starts, our team explains preparation, access, re-entry, cleaning,
-            food-storage, pet-safety and operational instructions relevant to your treatment.
-          </p>
+          <p className="eyebrow on-dark">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
+          <Html as="div" className="lede" html={data.lede} />
         </div>
 
         <div className="seg rv dark-seg" role="tablist">
@@ -161,10 +194,10 @@ export function Safety() {
         </div>
 
         <div className="grid-3">
-          {SAFETY[tab].map((group, i) => (
+          {groups.map((group, i) => (
             <div className="amc-box dark-box" key={i}>
               <ul className="checks">
-                {group.map((item) => (
+                {(group || []).map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>

@@ -5,11 +5,13 @@ import PestFinder from '../components/PestFinder'
 import Services from '../components/Services'
 import { AMC, IPM, Process, Safety, Sectors } from '../components/Sections'
 import { Areas, Band, Contact, FAQ } from '../components/Contact'
+import { HomeContentProvider, useHomeSection } from '../context/HomeContent'
 import { useCountUp, useReveal } from '../hooks'
 
-export default function Home() {
-  useReveal()
-  useCountUp()
+function HomeSections() {
+  const { loading } = useHomeSection('hero')
+  useReveal(!loading)
+  useCountUp(!loading)
   const location = useLocation()
 
   useEffect(() => {
@@ -39,5 +41,13 @@ export default function Home() {
       <Contact />
       <Band />
     </>
+  )
+}
+
+export default function Home() {
+  return (
+    <HomeContentProvider>
+      <HomeSections />
+    </HomeContentProvider>
   )
 }

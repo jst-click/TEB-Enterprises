@@ -11,12 +11,15 @@ export function AdminShell() {
   const navigate = useNavigate()
   const links = [
     ['/', 'Dashboard'],
+    ['/homepage', 'Home page'],
     ['/services', 'Services'],
     ['/gallery', 'Gallery'],
     ['/blogs', 'Blogs'],
     ['/contacts', 'Contacts'],
     ['/settings', 'Settings'],
   ]
+
+  const isHomePageEditor = location.pathname.startsWith('/homepage')
 
   return (
     <div className="min-h-screen flex bg-[var(--paper)]">
@@ -72,7 +75,13 @@ export function AdminShell() {
           </button>
         </div>
       </aside>
-      <main className="flex-1 p-6 md:p-8 overflow-auto">
+      <main
+        className={`flex-1 min-w-0 p-6 md:p-8 ${
+          isHomePageEditor
+            ? 'h-screen overflow-hidden flex flex-col min-h-0'
+            : 'overflow-auto'
+        }`}
+      >
         <Outlet />
       </main>
     </div>

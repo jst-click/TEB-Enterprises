@@ -1,0 +1,7 @@
+# Force HTTPS + non-www (apex)
+https://www.tebpestcontrol.com/*  https://tebpestcontrol.com/:splat  301!
+http://www.tebpestcontrol.com/*   https://tebpestcontrol.com/:splat  301!
+http://tebpestcontrol.com/*       https://tebpestcontrol.com/:splat  301!
+
+# SPA fallback
+/*    /index.html   200

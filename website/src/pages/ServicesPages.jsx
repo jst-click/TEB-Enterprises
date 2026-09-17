@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { getPublicService, getPublicServices, mediaUrl } from '../api'
 import { useEnquiry } from '../context/EnquiryContext'
 import { AREAS, PROCESS, SITE } from '../data/content'
 import { useReveal } from '../hooks'
+import NotFound from './NotFound'
 
 function highlightsList(text) {
   if (!text) return []
@@ -64,9 +65,20 @@ export function ServicesIndexPage() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [location, setLocation] = useState('all')
-  const [category, setCategory] = useState('all')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const categoryParam = searchParams.get('category') || 'all'
+  const category = ['all', 'pest', 'residential', 'commercial', 'amc', 'location'].includes(categoryParam)
+    ? categoryParam
+    : 'all'
   const { openEnquiry } = useEnquiry()
   useReveal()
+
+  const setCategory = (value) => {
+    const next = new URLSearchParams(searchParams)
+    if (!value || value === 'all') next.delete('category')
+    else next.set('category', value)
+    setSearchParams(next, { replace: true })
+  }
 
   useEffect(() => {
     getPublicServices()
@@ -398,14 +410,7 @@ export function ServiceDetailPage() {
   }, [slug])
 
   if (error) {
-    return (
-      <section style={{ paddingTop: 72, paddingBottom: 80 }}>
-        <div className="wrap">
-          <p className="lede">{error}</p>
-          <Link className="btn btn--orange" to="/services">Back to services</Link>
-        </div>
-      </section>
-    )
+    return <NotFound />
   }
 
   if (!item) {

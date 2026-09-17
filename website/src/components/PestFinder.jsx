@@ -1,48 +1,61 @@
 import { useMemo, useState } from 'react'
 import { PESTS } from '../data/content'
+import { useHomeSection } from '../context/HomeContent'
+import Html from './Html'
 
-const FILTERS = [
-  ['all', 'All pests'],
-  ['crawling', 'Crawling'],
-  ['flying', 'Flying'],
-  ['wood', 'Wood-destroying'],
-  ['rodent', 'Rodents'],
-  ['stored', 'Stored product'],
-]
+function plain(html = '') {
+  return String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+}
+
+const FALLBACK = {
+  eyebrow: 'Pest finder',
+  title: "Tell us what you're seeing. We'll tell you what it takes.",
+  lede: "Pick the pest you're dealing with to see the warning signs and how we treat it. Not sure? Send us a photo and our team will identify it for you.",
+  filters: [
+    { id: 'all', label: 'All pests' },
+    { id: 'crawling', label: 'Crawling' },
+    { id: 'flying', label: 'Flying' },
+    { id: 'wood', label: 'Wood-destroying' },
+    { id: 'rodent', label: 'Rodents' },
+    { id: 'stored', label: 'Stored product' },
+  ],
+  items: PESTS.map((p) => ({ ...p, t: `<p>${p.t}</p>` })),
+}
 
 export default function PestFinder() {
+  const { data } = useHomeSection('pests', FALLBACK)
   const [group, setGroup] = useState('all')
   const [active, setActive] = useState(null)
 
+  const filters = data.filters?.length ? data.filters : FALLBACK.filters
+  const pests = data.items?.length ? data.items : FALLBACK.items
+
   const list = useMemo(
-    () => PESTS.filter((p) => group === 'all' || p.g === group),
-    [group],
+    () => pests.filter((p) => group === 'all' || p.g === group),
+    [group, pests],
   )
 
   return (
     <section className="finder" id="pests">
       <div className="wrap">
         <div className="sec-head rv">
-          <p className="eyebrow">Pest finder</p>
-          <h2>Tell us what you&apos;re seeing. We&apos;ll tell you what it takes.</h2>
-          <p className="lede">
-            Pick the pest you&apos;re dealing with to see the warning signs and how we treat it. Not
-            sure? Send us a photo and our team will identify it for you.
-          </p>
+          <p className="eyebrow">{data.eyebrow}</p>
+          <h2>{data.title}</h2>
+          <Html as="div" className="lede" html={data.lede} />
         </div>
 
         <div className="filters rv">
-          {FILTERS.map(([g, label]) => (
+          {filters.map((f) => (
             <button
-              key={g}
+              key={f.id}
               type="button"
-              className={`chip${group === g ? ' active' : ''}`}
+              className={`chip${group === f.id ? ' active' : ''}`}
               onClick={() => {
-                setGroup(g)
+                setGroup(f.id)
                 setActive(null)
               }}
             >
-              {label}
+              {f.label}
             </button>
           ))}
         </div>
@@ -55,12 +68,12 @@ export default function PestFinder() {
               </button>
               <p className="eyebrow on-dark">{active.c} · Treatment brief</p>
               <h3>{active.n}</h3>
-              <p style={{ color: 'rgba(255,255,255,.72)', maxWidth: '60ch', margin: 0 }}>{active.t}</p>
+              <Html as="div" html={active.t} style={{ color: 'rgba(255,255,255,.72)', maxWidth: '60ch' }} />
               <div className="cols">
                 <div>
                   <h4>What you might notice</h4>
                   <ul>
-                    {active.signs.map((s) => (
+                    {(active.signs || []).map((s) => (
                       <li key={s}>{s}</li>
                     ))}
                   </ul>
@@ -68,7 +81,7 @@ export default function PestFinder() {
                 <div>
                   <h4>How we treat it</h4>
                   <ul>
-                    {active.treat.map((s) => (
+                    {(active.treat || []).map((s) => (
                       <li key={s}>{s}</li>
                     ))}
                   </ul>
@@ -91,7 +104,7 @@ export default function PestFinder() {
             >
               <span className="code">{p.c}</span>
               <h3>{p.n}</h3>
-              <p className="t">{p.t}</p>
+              <p className="t">{plain(p.t)}</p>
             </button>
           ))}
         </div>

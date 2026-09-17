@@ -13,16 +13,20 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     admin = db.query(Admin).filter(Admin.email == form_data.username).first()
-    if not admin or not verify_password(form_data.password, admin.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+    if not admin:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email does not exist")
+    if not verify_password(form_data.password, admin.hashed_password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Password is wrong")
     return Token(access_token=create_access_token(admin.email))
 
 
 @router.post("/login-json", response_model=Token)
 def login_json(payload: LoginRequest, db: Session = Depends(get_db)):
     admin = db.query(Admin).filter(Admin.email == payload.email).first()
-    if not admin or not verify_password(payload.password, admin.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+    if not admin:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email does not exist")
+    if not verify_password(payload.password, admin.hashed_password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Password is wrong")
     return Token(access_token=create_access_token(admin.email))
 
 
