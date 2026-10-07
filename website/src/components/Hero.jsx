@@ -27,7 +27,7 @@ export function Hero() {
 
   return (
     <section className="hero" id="top">
-      <div className="wrap">
+      <div className="hero-inner">
         <div className="hero-copy">
           <p className="eyebrow">{data.eyebrow}</p>
           <h1>
@@ -53,24 +53,26 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="perimeter" aria-hidden="true">
-          <svg viewBox="0 0 400 400">
-            <g className="spin-slow">
-              <circle cx="200" cy="200" r="188" fill="none" stroke="#FF6A00" strokeWidth="2" strokeDasharray="3 12" opacity=".8" />
-            </g>
-            <g className="spin-rev">
-              <circle cx="200" cy="200" r="160" fill="none" stroke="#1B47C4" strokeWidth="1.5" strokeDasharray="40 18" opacity=".55" />
-            </g>
-            <circle cx="200" cy="200" r="132" fill="none" stroke="#0E5132" strokeWidth="1" opacity=".35" />
-            <circle cx="200" cy="200" r="104" fill="none" stroke="rgba(10,22,38,.12)" strokeWidth="1" />
-          </svg>
-          <div className="perimeter-core">
-            <img src="/logo.png" alt="TEB Enterprises — Best Pest Control Services in Bangalore logo" />
-            <div className="st">{data.core_label}</div>
+        <div className="hero-visual">
+          <div className="perimeter" aria-hidden="true">
+            <svg viewBox="0 0 400 400">
+              <g className="spin-slow">
+                <circle cx="200" cy="200" r="188" fill="none" stroke="#FF6A00" strokeWidth="2" strokeDasharray="3 12" opacity=".8" />
+              </g>
+              <g className="spin-rev">
+                <circle cx="200" cy="200" r="160" fill="none" stroke="#1B47C4" strokeWidth="1.5" strokeDasharray="40 18" opacity=".55" />
+              </g>
+              <circle cx="200" cy="200" r="132" fill="none" stroke="#0E5132" strokeWidth="1" opacity=".35" />
+              <circle cx="200" cy="200" r="104" fill="none" stroke="rgba(10,22,38,.12)" strokeWidth="1" />
+            </svg>
+            <div className="perimeter-core">
+              <img src="/logo.png" alt="TEB Enterprises — Best Pest Control Services in Bangalore logo" />
+              <div className="st">{data.core_label}</div>
+            </div>
+            {nodes[0] && <div className="node n1"><i>01</i> {nodes[0]}</div>}
+            {nodes[1] && <div className="node n2"><i>02</i> {nodes[1]}</div>}
+            {nodes[2] && <div className="node n3"><i>03</i> {nodes[2]}</div>}
           </div>
-          {nodes[0] && <div className="node n1"><i>01</i> {nodes[0]}</div>}
-          {nodes[1] && <div className="node n2"><i>02</i> {nodes[1]}</div>}
-          {nodes[2] && <div className="node n3"><i>03</i> {nodes[2]}</div>}
         </div>
       </div>
     </section>
