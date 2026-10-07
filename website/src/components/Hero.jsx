@@ -28,7 +28,7 @@ export function Hero() {
   return (
     <section className="hero" id="top">
       <div className="wrap">
-        <div>
+        <div className="hero-copy">
           <p className="eyebrow">{data.eyebrow}</p>
           <h1>
             {data.title_line1}
@@ -37,7 +37,7 @@ export function Hero() {
             <br />
             <span className="l3">{data.title_line3}</span>
           </h1>
-          <Html as="div" className="lede" html={data.lede} />
+          <Html as="div" className="lede rich-html" html={data.lede} />
           <div className="hero-cta">
             <a className="btn btn--orange" href="#contact">
               {data.primary_cta} <span className="arw">→</span>
