@@ -1,9 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getPublicServices } from '../api'
-import { B2B_SERVICES, B2C_SERVICES } from '../data/content'
+import { B2B_SERVICES, B2C_SERVICES, SERVICE_CARD_LINKS } from '../data/content'
 import { useHomeSection } from '../context/HomeContent'
 import Html from './Html'
+
+function resolveCardTo(service) {
+  if (!service) return null
+  const bySlug = service.slug && SERVICE_CARD_LINKS[service.slug]
+  if (bySlug) return bySlug
+  const byCode = service.code && SERVICE_CARD_LINKS[service.code]
+  if (byCode) return byCode
+  const byTitle = service.title && SERVICE_CARD_LINKS[service.title]
+  if (byTitle) return byTitle
+  if (service.slug) return `/${service.slug}`
+  return null
+}
 
 function Card({ code, title, text, featured, to }) {
   const inner = (
@@ -79,14 +91,14 @@ export default function Services() {
     title: s.title,
     summary: s.text,
     is_featured: false,
-    slug: null,
+    slug: s.slug || null,
   }))
   const fallbackB2b = B2B_SERVICES.map((s) => ({
     code: s.num,
     title: s.title,
     summary: s.text,
     is_featured: false,
-    slug: null,
+    slug: s.slug || null,
   }))
 
   const list = tab === 'b2c'
@@ -143,7 +155,7 @@ export default function Services() {
               title={s.title}
               text={s.summary || s.text}
               featured={!!s.is_featured}
-              to={s.slug ? `/${s.slug}` : null}
+              to={resolveCardTo(s)}
             />
           ))}
         </div>

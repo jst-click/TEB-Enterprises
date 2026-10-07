@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { getPublicSettings, submitContact } from '../api'
 import { AREAS, FAQS, PEST_OPTIONS, PROPERTY_TYPES, SITE } from '../data/content'
 import { useHomeSection } from '../context/HomeContent'
+import GmbLink, { GMB_URL } from './GmbLink'
 import Html from './Html'
 
 export function Areas() {
@@ -84,7 +85,7 @@ export function FAQ() {
                 >
                   {item.q}
                 </button>
-                <div className="acc-a" style={{ maxHeight: isOpen ? 500 : 0 }}>
+                <div className="acc-a" style={{ maxHeight: isOpen ? 800 : 0 }}>
                   <Html as="div" html={item.a} />
                 </div>
               </div>
@@ -262,6 +263,14 @@ export function Contact() {
                   </a>
                 </p>
               </div>
+              <div>
+                <span>Google Business Profile</span>
+                <p>
+                  <a href={GMB_URL} target="_blank" rel="noopener noreferrer">
+                    View on Google Maps →
+                  </a>
+                </p>
+              </div>
               <div><span>GSTIN</span><p>{SITE.gstin}</p></div>
             </div>
           </div>
@@ -364,6 +373,7 @@ export function Band() {
           <a className="btn btn--onDark" href={SITE.phoneHref}>
             Call now: {SITE.phone}
           </a>
+          <GmbLink variant="onDark" label="Find us on Google" />
           <a
             className="btn"
             href="#contact"

@@ -617,13 +617,17 @@ export function ServiceEditPage() {
             </div>
           </SectionCard>
 
-          <SectionCard id="hero" title="2. Hero section" hint="Top banner: title comes from Basics. Add summary + cover image here.">
+          <SectionCard
+            id="hero"
+            title="2. Hero & card image"
+            hint="This image shows on the /services grid cards and as the service detail hero. Upload a unique image per service."
+          >
             <div>
               <label className={labelClass()}>Hero summary</label>
               <textarea className={fieldClass()} rows={3} placeholder="Short intro under the title" value={form.summary} onChange={(e) => set('summary', e.target.value)} />
             </div>
             <ImageField
-              label="Hero / cover image"
+              label="Service cover image (cards + hero)"
               value={form.cover_image}
               onChange={(v) => set('cover_image', v)}
               uploading={uploading}

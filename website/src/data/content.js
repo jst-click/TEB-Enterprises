@@ -1,3 +1,5 @@
+import { HOME_FAQS } from '../seo/homeFaqs'
+
 export const SITE = {
   name: 'TEB Enterprises',
   tagline: 'Team Experts Bangalore',
@@ -15,6 +17,7 @@ export const SITE = {
   social: {
     facebook: 'https://www.facebook.com/tebenterprises/?locale=fr_FR',
     instagram: 'https://www.instagram.com/tebenterprises1/',
+    gmb: 'https://share.google/eW8mqyNEjn8Ke8QPs',
   },
 }
 
@@ -292,15 +295,32 @@ export const PESTS = [
 ]
 
 export const B2C_SERVICES = [
-  { num: 'PACKAGE 01', title: 'General pest control', text: 'A comprehensive treatment for cockroaches, ants, silverfish, spiders and other common crawling insects across the home.' },
-  { num: 'PACKAGE 02', title: 'Kitchen pest control', text: 'Targeted work around cabinets, sinks, drainage points, appliances, storage and food-preparation areas.' },
-  { num: 'PACKAGE 03', title: 'Bedbug treatment', text: 'Detailed inspection of beds, mattresses, furniture joints, upholstery and skirting. Multiple visits may be recommended.' },
-  { num: 'PACKAGE 04', title: 'Termite treatment', text: 'Pre- and post-construction termite control for homes, villas, apartments, furniture and wooden fixtures.' },
-  { num: 'PACKAGE 05', title: 'Mosquito management', text: 'Treatment plus breeding-source control across gardens, balconies, terraces, drains and common areas.' },
-  { num: 'PACKAGE 06', title: 'Rodent control', text: 'Baiting, trapping, monitoring and rodent-proofing recommendations for rat and mouse activity.' },
-  { num: 'PACKAGE 07', title: 'Move-in pest control', text: 'Treatment for a newly purchased or rented home before furniture and kitchen items are moved in.' },
-  { num: 'PACKAGE 08', title: 'Annual home protection', text: 'A scheduled residential programme with periodic treatments and monitoring through the contract period.' },
+  {
+    num: 'PACKAGE 01',
+    title: 'General pest control',
+    text: 'A comprehensive treatment for cockroaches, ants, silverfish, spiders and other common crawling insects across the home.',
+    slug: 'cockroach-control-bangalore',
+  },
+  { num: 'PACKAGE 02', title: 'Kitchen pest control', text: 'Targeted work around cabinets, sinks, drainage points, appliances, storage and food-preparation areas.', slug: 'kitchen-pest-control' },
+  { num: 'PACKAGE 03', title: 'Bedbug treatment', text: 'Detailed inspection of beds, mattresses, furniture joints, upholstery and skirting. Multiple visits may be recommended.', slug: 'bed-bug-control-bangalore' },
+  { num: 'PACKAGE 04', title: 'Termite treatment', text: 'Pre- and post-construction termite control for homes, villas, apartments, furniture and wooden fixtures.', slug: 'termite-control-bangalore' },
+  { num: 'PACKAGE 05', title: 'Mosquito management', text: 'Treatment plus breeding-source control across gardens, balconies, terraces, drains and common areas.', slug: 'mosquito-control-bangalore' },
+  { num: 'PACKAGE 06', title: 'Rodent control', text: 'Baiting, trapping, monitoring and rodent-proofing recommendations for rat and mouse activity.', slug: 'rodent-control-bangalore' },
+  { num: 'PACKAGE 07', title: 'Move-in pest control', text: 'Treatment for a newly purchased or rented home before furniture and kitchen items are moved in.', slug: 'move-in-pest-control' },
+  { num: 'PACKAGE 08', title: 'Annual home protection', text: 'A scheduled residential programme with periodic treatments and monitoring through the contract period.', slug: 'pest-control-amc-bangalore' },
 ]
+
+/** Home Services grid: package slug → public SEO / detail page path */
+export const SERVICE_CARD_LINKS = {
+  'general-pest-control-home': '/cockroach-control-bangalore',
+  'PACKAGE 01': '/cockroach-control-bangalore',
+  'General pest control': '/cockroach-control-bangalore',
+  'bedbug-treatment-home': '/bed-bug-control-bangalore',
+  'termite-treatment-home': '/termite-control-bangalore',
+  'mosquito-management-home': '/mosquito-control-bangalore',
+  'rodent-control-home': '/rodent-control-bangalore',
+  'annual-home-protection': '/pest-control-amc-bangalore',
+}
 
 export const B2B_SERVICES = [
   { num: 'SCOPE 01', title: 'Site inspection & risk assessment', text: 'A full survey of pest activity, entry points, breeding sources and site-specific risks before any treatment plan is written.' },
@@ -393,22 +413,8 @@ export const AREAS = [
   'Rajajinagar', 'Malleshwaram', 'Peenya', 'Yeshwanthpur', 'Manyata Tech Park', 'Devanahalli', 'Hoskote',
 ]
 
-export const FAQS = [
-  ['Do you provide pest control for both homes and businesses?', 'Yes. TEB Enterprises provides complete B2C residential pest control and B2B commercial pest-management services.'],
-  ['Which areas do you serve?', 'We primarily serve Bengaluru. Contact our team to confirm availability for your specific location.'],
-  ['Do you provide one-time treatment?', 'Yes, for selected pest problems. For recurring or high-risk properties we may recommend a scheduled service plan instead.'],
-  ['Do you provide Annual Maintenance Contracts?', 'Yes. We offer pest-control AMCs for residential, commercial, industrial and institutional properties.'],
-  ['How much does pest control cost?', 'It depends on property size, pest type, infestation level, treatment method, number of visits and service frequency. Contact us for an assessment and quotation.'],
-  ['Is pest control safe for children and pets?', 'Safety depends on the application method and on following instructions. Tell our team about children, elderly residents, pets, allergies or sensitive conditions before treatment.'],
-  ['Do I need to leave the property during treatment?', 'It depends on the method used. Our team gives you the required vacancy and re-entry instructions before service.'],
-  ['How long does treatment take?', 'Duration depends on property size, pest type, infestation level and the treatment method.'],
-  ['Will one treatment solve the problem completely?', 'Some infestations are controlled in one service. Others — particularly bedbugs, termites, rodents and severe cockroach infestations — need multiple visits and preventive action.'],
-  ['Do you provide termite treatment?', 'Yes. We provide both pre-construction and post-construction termite-control services.'],
-  ['Do you provide documentation for companies?', 'Yes. Commercial service documentation is provided according to the agreed scope and contract requirements.'],
-  ['What should I do before the service?', 'Preparation depends on the treatment. Our team shares instructions covering food, utensils, furniture access, children, pets and re-entry requirements.'],
-  ['Why are pests returning after treatment?', 'Usually because of untreated breeding sources, neighbouring infestations, structural entry points, waste-handling problems, moisture, available food, or an incomplete follow-up. We can inspect the cause and recommend corrective measures.'],
-  ['Do you provide emergency pest control?', 'Priority service may be arranged depending on team availability, site location and pest type.'],
-]
+/** Homepage FAQ pairs — kept in sync with FAQPage schema */
+export const FAQS = HOME_FAQS.map((item) => [item.q, item.a])
 
 export const PROPERTY_TYPES = [
   'Independent house', 'Apartment / flat', 'Villa / gated community', 'Office',

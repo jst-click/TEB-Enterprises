@@ -12,6 +12,7 @@ export function AdminShell() {
   const links = [
     ['/', 'Dashboard'],
     ['/homepage', 'Home page'],
+    ['/amc', 'AMC page'],
     ['/services', 'Services'],
     ['/gallery', 'Gallery'],
     ['/blogs', 'Blogs'],
@@ -19,7 +20,8 @@ export function AdminShell() {
     ['/settings', 'Settings'],
   ]
 
-  const isHomePageEditor = location.pathname.startsWith('/homepage')
+  const isSectionEditor =
+    location.pathname.startsWith('/homepage') || location.pathname.startsWith('/amc')
 
   return (
     <div className="min-h-screen flex bg-[var(--paper)]">
@@ -77,7 +79,7 @@ export function AdminShell() {
       </aside>
       <main
         className={`flex-1 min-w-0 p-6 md:p-8 ${
-          isHomePageEditor
+          isSectionEditor
             ? 'h-screen overflow-hidden flex flex-col min-h-0'
             : 'overflow-auto'
         }`}

@@ -4,6 +4,13 @@ import { getPublicService, getPublicServices, mediaUrl } from '../api'
 import { useEnquiry } from '../context/EnquiryContext'
 import { AREAS, PROCESS, SITE } from '../data/content'
 import { useReveal } from '../hooks'
+import JsonLd from '../seo/JsonLd'
+import SeoHead from '../seo/SeoHead'
+import {
+  buildServiceSchemas,
+  resolveServiceFaqPairs,
+  resolveServiceMeta,
+} from '../seo/servicePageSeo'
 import NotFound from './NotFound'
 
 function highlightsList(text) {
@@ -48,16 +55,63 @@ const CATEGORY_LABELS = {
 
 const DEFAULT_IMAGES = {
   pest: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=70',
-  residential: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=70',
+  residential: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70',
   commercial: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=70',
-  amc: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=70',
+  amc: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=70',
   location: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=800&q=70',
   package_b2c: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=70',
   package_b2b: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=70',
 }
 
+/** Unique defaults by slug when cover_image is empty (service-name matched). */
+const SLUG_IMAGES = {
+  'general-pest-control-home': 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=70',
+  'kitchen-pest-control': 'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1200&q=70',
+  'bedbug-treatment-home': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=70',
+  'termite-treatment-home': 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=70',
+  'mosquito-management-home': 'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&fit=crop&w=1200&q=70',
+  'rodent-control-home': 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1200&q=70',
+  'move-in-pest-control': 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=70',
+  'annual-home-protection': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=70',
+  'where-we-work-homes': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=70',
+  'cockroach-control-bangalore': 'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1200&q=70',
+  'termite-control-bangalore': 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=70',
+  'bed-bug-control-bangalore': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=70',
+  'rodent-control-bangalore': 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1200&q=70',
+  'mosquito-control-bangalore': 'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&fit=crop&w=1200&q=70',
+  'ant-control-bangalore': 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1200&q=70',
+  'residential-pest-control-bangalore': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=70',
+  'commercial-pest-control-bangalore': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-amc-bangalore': 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-whitefield': 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-marathahalli': 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-sarjapur-road': 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-bellandur': 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-brookefield': 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-hoodi': 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-kr-puram': 'https://images.unsplash.com/photo-1467269204591-fc0da825e6b7?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-electronic-city': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=70',
+  'pest-control-hsr-layout': 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=70',
+}
+
+function imageFromName(s) {
+  const hay = `${s.slug || ''} ${s.title || ''}`.toLowerCase()
+  if (hay.includes('cockroach')) return SLUG_IMAGES['cockroach-control-bangalore']
+  if (hay.includes('termite')) return SLUG_IMAGES['termite-control-bangalore']
+  if (hay.includes('bed')) return SLUG_IMAGES['bed-bug-control-bangalore']
+  if (hay.includes('rodent') || hay.includes('rat')) return SLUG_IMAGES['rodent-control-bangalore']
+  if (hay.includes('mosquito')) return SLUG_IMAGES['mosquito-control-bangalore']
+  if (hay.includes('ant')) return SLUG_IMAGES['ant-control-bangalore']
+  if (hay.includes('kitchen')) return SLUG_IMAGES['kitchen-pest-control']
+  if (hay.includes('amc') || hay.includes('annual')) return SLUG_IMAGES['pest-control-amc-bangalore']
+  return null
+}
+
 function serviceImage(s) {
   if (s.cover_image) return mediaUrl(s.cover_image)
+  if (s.slug && SLUG_IMAGES[s.slug]) return SLUG_IMAGES[s.slug]
+  const byName = imageFromName(s)
+  if (byName) return byName
   return DEFAULT_IMAGES[s.category] || DEFAULT_IMAGES.pest
 }
 
@@ -208,7 +262,7 @@ export function ServicesIndexPage() {
             <div className="card" style={{ marginBottom: 24, display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'center' }}>
               <img
                 src={serviceImage(selectedLocation)}
-                alt={selectedLocation.title}
+                alt={selectedLocation.title || 'Pest control service area in Bangalore'}
                 style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 12 }}
               />
               <div style={{ flex: 1, minWidth: 220 }}>
@@ -241,7 +295,7 @@ export function ServicesIndexPage() {
                 >
                   <img
                     src={serviceImage(s)}
-                    alt={s.title}
+                    alt={s.title || 'Pest control service in Bangalore'}
                     style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover' }}
                   />
                   <div style={{ padding: 18, flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -390,18 +444,17 @@ export function ServiceDetailPage() {
   const [item, setItem] = useState(null)
   const [related, setRelated] = useState([])
   const [error, setError] = useState('')
+  const [faqOpen, setFaqOpen] = useState(0)
   const { openEnquiry } = useEnquiry()
   useReveal()
 
   useEffect(() => {
     setError('')
     setItem(null)
+    setFaqOpen(0)
     getPublicService(slug)
       .then((data) => {
         setItem(data)
-        document.title = data.meta_title || `${data.title} | TEB Enterprises`
-        const meta = document.querySelector('meta[name="description"]')
-        if (meta && data.meta_description) meta.setAttribute('content', data.meta_description)
         return getPublicServices({ category: data.category }).then((list) =>
           setRelated(list.filter((s) => s.slug !== data.slug).slice(0, 4)),
         )
@@ -409,11 +462,26 @@ export function ServiceDetailPage() {
       .catch(() => setError('Service page not found.'))
   }, [slug])
 
+  const seoMeta = useMemo(
+    () => (item ? resolveServiceMeta(slug, item) : null),
+    [slug, item],
+  )
+
+  const faqItems = useMemo(() => {
+    if (!item) return []
+    return resolveServiceFaqPairs(slug, pipePairs(item.faq_items))
+  }, [slug, item])
+
+  const schemas = useMemo(() => {
+    if (!item) return []
+    return buildServiceSchemas(slug, item, faqItems)
+  }, [slug, item, faqItems])
+
   if (error) {
     return <NotFound />
   }
 
-  if (!item) {
+  if (!item || !seoMeta) {
     return (
       <section style={{ paddingTop: 72 }}>
         <div className="wrap"><p className="lede">Loading…</p></div>
@@ -427,7 +495,6 @@ export function ServiceDetailPage() {
   const aboutImg = item.about_image ? mediaUrl(item.about_image) : img
   const whyItems = pipePairs(item.why_items)
   const processItems = pipePairs(item.process_items)
-  const faqItems = pipePairs(item.faq_items)
   const galleryImgs = galleryList(item.gallery_images, [
     img,
     'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=70',
@@ -445,8 +512,25 @@ export function ServiceDetailPage() {
     ? processItems.map(([t, d], i) => [String(i + 1).padStart(2, '0'), t, d])
     : PROCESS.slice(0, 4)
 
+  const displayFaqs =
+    faqItems.length > 0
+      ? faqItems
+      : points.slice(0, 5).map((p) => [
+          `Do you provide ${p.toLowerCase()}?`,
+          `Yes. TEB Enterprises provides ${p.toLowerCase()} as part of our ${item.title.toLowerCase()} programme across Bengaluru. Contact us for a free site inspection and quotation.`,
+        ])
+
   return (
     <>
+      <SeoHead
+        title={seoMeta.title}
+        description={seoMeta.description}
+        path={seoMeta.path}
+        image={seoMeta.image}
+        keywords={seoMeta.keywords}
+      />
+      <JsonLd id={`service-seo-${slug}`} data={schemas} />
+
       {/* Hero */}
       <section
         style={{
@@ -530,7 +614,7 @@ export function ServiceDetailPage() {
               <div style={{ position: 'relative' }}>
                 <img
                   src={aboutImg}
-                  alt={item.title}
+                  alt={item.title || 'Pest control service in Bangalore'}
                   style={{ width: '100%', borderRadius: 14, aspectRatio: '4/3', objectFit: 'cover', boxShadow: 'var(--shadow)' }}
                 />
                 <div
@@ -636,7 +720,11 @@ export function ServiceDetailPage() {
                   className="card"
                   style={{ textDecoration: 'none', display: 'block', padding: 0, overflow: 'hidden' }}
                 >
-                  <img src={serviceImage(s)} alt={s.title} style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover' }} />
+                  <img
+                    src={serviceImage(s)}
+                    alt={s.title || 'Pest control service in Bangalore'}
+                    style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover' }}
+                  />
                   <div style={{ padding: 18 }}>
                     <h3 style={{ fontSize: '1rem', marginBottom: 6 }}>{s.title}</h3>
                     <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--muted)' }}>{s.summary}</p>
@@ -649,7 +737,7 @@ export function ServiceDetailPage() {
       )}
 
       {/* FAQ */}
-      {(faqItems.length > 0 || points.length > 0) && (
+      {displayFaqs.length > 0 && (
         <section style={{ padding: 'clamp(48px,6vw,80px) 0', background: '#fff', borderBlock: '1px solid var(--line-soft)' }}>
           <div className="wrap" style={{ maxWidth: 780 }}>
             <div className="sec-head" style={{ marginBottom: 28 }}>
@@ -657,22 +745,24 @@ export function ServiceDetailPage() {
               <h2>{item.faq_title || 'What to expect'}</h2>
             </div>
             <div className="acc">
-              {(faqItems.length
-                ? faqItems
-                : points.slice(0, 5).map((p) => [
-                    `Do you provide ${p.toLowerCase()}?`,
-                    `Yes. TEB Enterprises provides ${p.toLowerCase()} as part of our ${item.title.toLowerCase()} programme across Bengaluru. Contact us for a free site inspection and quotation.`,
-                  ])
-              ).map(([q, a]) => (
-                <div key={q} className="acc-item">
-                  <button className="acc-q" type="button" style={{ pointerEvents: 'none' }}>
-                    {q}
-                  </button>
-                  <div className="acc-a" style={{ maxHeight: 200 }}>
-                    <p>{a}</p>
+              {displayFaqs.map(([q, a], i) => {
+                const isOpen = faqOpen === i
+                return (
+                  <div key={q} className={`acc-item${isOpen ? ' open' : ''}`}>
+                    <button
+                      className="acc-q"
+                      type="button"
+                      aria-expanded={isOpen}
+                      onClick={() => setFaqOpen(isOpen ? null : i)}
+                    >
+                      {q}
+                    </button>
+                    <div className="acc-a" style={{ maxHeight: isOpen ? 600 : 0 }}>
+                      <p>{a}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>

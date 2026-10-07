@@ -106,6 +106,184 @@ function SectionForm({ sectionKey, data, setData }) {
     )
   }
 
+  if (sectionKey === 'why_choose') {
+    return (
+      <div className="grid gap-4">
+        <div>
+          <FieldLabel>Eyebrow</FieldLabel>
+          <TextInput value={data.eyebrow} onChange={(v) => update({ eyebrow: v })} />
+        </div>
+        <div>
+          <FieldLabel>Title</FieldLabel>
+          <TextInput value={data.title} onChange={(v) => update({ title: v })} />
+        </div>
+        <div>
+          <FieldLabel>Intro text</FieldLabel>
+          <RichTextEditor value={data.lede} onChange={(v) => update({ lede: v })} />
+        </div>
+        <FieldLabel>Reason cards</FieldLabel>
+        {(data.items || []).map((item, i) => (
+          <div key={i} className="rounded-xl border border-black/10 bg-white p-4 grid gap-3">
+            <div className="flex justify-between items-center">
+              <span className="font-[family-name:var(--mono)] text-[10px] tracking-[0.14em] uppercase text-[var(--orange)]">
+                Point {String(i + 1).padStart(2, '0')}
+              </span>
+              <button
+                type="button"
+                className="text-xs font-semibold text-red-600"
+                onClick={() => update({ items: removeAt(data.items, i) })}
+              >
+                Remove
+              </button>
+            </div>
+            <TextInput
+              value={item.title}
+              placeholder="Title"
+              onChange={(v) => update({ items: setAt(data.items, i, { ...item, title: v }) })}
+            />
+            <textarea
+              className="w-full rounded-xl border border-black/15 bg-[var(--paper)] px-4 py-3 text-sm min-h-[80px]"
+              value={item.text || ''}
+              placeholder="Description"
+              onChange={(e) => update({ items: setAt(data.items, i, { ...item, text: e.target.value }) })}
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          className="rounded-full border border-black/15 px-4 py-2 text-sm w-fit"
+          onClick={() => update({ items: [...(data.items || []), { title: '', text: '' }] })}
+        >
+          + Add point
+        </button>
+        <div>
+          <FieldLabel>Closing line</FieldLabel>
+          <RichTextEditor value={data.closing} onChange={(v) => update({ closing: v })} />
+        </div>
+      </div>
+    )
+  }
+
+  if (sectionKey === 'pricing') {
+    return (
+      <div className="grid gap-4">
+        <div>
+          <FieldLabel>Eyebrow</FieldLabel>
+          <TextInput value={data.eyebrow} onChange={(v) => update({ eyebrow: v })} />
+        </div>
+        <div>
+          <FieldLabel>Title</FieldLabel>
+          <TextInput value={data.title} onChange={(v) => update({ title: v })} />
+        </div>
+        <div>
+          <FieldLabel>Description</FieldLabel>
+          <RichTextEditor value={data.lede} onChange={(v) => update({ lede: v })} />
+        </div>
+        <div>
+          <FieldLabel>Column headers (3 lines: Service, Pricing, Quote)</FieldLabel>
+          <LinesEditor
+            value={data.columns}
+            onChange={(v) => update({ columns: v.filter(Boolean).slice(0, 3) })}
+          />
+        </div>
+        <FieldLabel>Pricing rows</FieldLabel>
+        {(data.rows || []).map((row, i) => (
+          <div key={i} className="rounded-xl border border-black/10 bg-white p-4 grid gap-3">
+            <div className="flex justify-between items-center">
+              <span className="font-[family-name:var(--mono)] text-[10px] tracking-[0.14em] uppercase text-[var(--orange)]">
+                Row {String(i + 1).padStart(2, '0')}
+              </span>
+              <button
+                type="button"
+                className="text-xs font-semibold text-red-600"
+                onClick={() => update({ rows: removeAt(data.rows, i) })}
+              >
+                Remove
+              </button>
+            </div>
+            <TextInput
+              value={row.service}
+              placeholder="Service name"
+              onChange={(v) => update({ rows: setAt(data.rows, i, { ...row, service: v }) })}
+            />
+            <TextInput
+              value={row.pricing}
+              placeholder="Pricing information"
+              onChange={(v) => update({ rows: setAt(data.rows, i, { ...row, pricing: v }) })}
+            />
+            <TextInput
+              value={row.quote_label}
+              placeholder="Quote link label"
+              onChange={(v) => update({ rows: setAt(data.rows, i, { ...row, quote_label: v }) })}
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          className="rounded-full border border-black/15 px-4 py-2 text-sm w-fit"
+          onClick={() =>
+            update({
+              rows: [...(data.rows || []), { service: '', pricing: '', quote_label: 'WhatsApp Us' }],
+            })
+          }
+        >
+          + Add row
+        </button>
+        <div>
+          <FieldLabel>CTA title</FieldLabel>
+          <TextInput value={data.cta_title} onChange={(v) => update({ cta_title: v })} />
+        </div>
+        <div>
+          <FieldLabel>CTA text</FieldLabel>
+          <RichTextEditor value={data.cta_text} onChange={(v) => update({ cta_text: v })} />
+        </div>
+        <div>
+          <FieldLabel>CTA button label</FieldLabel>
+          <TextInput value={data.cta_label} onChange={(v) => update({ cta_label: v })} />
+        </div>
+        <div>
+          <FieldLabel>WhatsApp prefill message</FieldLabel>
+          <textarea
+            className="w-full rounded-xl border border-black/15 bg-white px-4 py-3 text-sm min-h-[90px]"
+            value={data.whatsapp_message || ''}
+            onChange={(e) => update({ whatsapp_message: e.target.value })}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (sectionKey === 'trust') {
+    return (
+      <div className="grid gap-4">
+        <div>
+          <FieldLabel>Eyebrow</FieldLabel>
+          <TextInput value={data.eyebrow} onChange={(v) => update({ eyebrow: v })} />
+        </div>
+        <div>
+          <FieldLabel>Title</FieldLabel>
+          <TextInput value={data.title} onChange={(v) => update({ title: v })} />
+        </div>
+        <div>
+          <FieldLabel>Body text</FieldLabel>
+          <RichTextEditor value={data.lede} onChange={(v) => update({ lede: v })} />
+        </div>
+        <div>
+          <FieldLabel>Audiences label</FieldLabel>
+          <TextInput value={data.audiences_label} onChange={(v) => update({ audiences_label: v })} />
+        </div>
+        <div>
+          <FieldLabel>Who we serve (one per line)</FieldLabel>
+          <LinesEditor value={data.audiences} onChange={(v) => update({ audiences: v.filter(Boolean) })} />
+        </div>
+        <div>
+          <FieldLabel>Primary CTA</FieldLabel>
+          <TextInput value={data.primary_cta} onChange={(v) => update({ primary_cta: v })} />
+        </div>
+      </div>
+    )
+  }
+
   if (sectionKey === 'stats') {
     return (
       <div className="grid gap-3">

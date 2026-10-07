@@ -92,6 +92,9 @@ class SettingsOut(BaseModel):
     id: int
     whatsapp_number: str
     contact_email: str
+    sitemap_urls: list[str] = []
+    # Auto-generated from published blogs — not editable; always under /blogs/{slug}
+    blog_sitemap_urls: list[str] = []
     updated_at: datetime | None = None
 
     class Config:
@@ -101,6 +104,7 @@ class SettingsOut(BaseModel):
 class SettingsUpdate(BaseModel):
     whatsapp_number: str = Field(..., min_length=8, max_length=32)
     contact_email: EmailStr
+    sitemap_urls: list[str] = Field(default_factory=list)
 
 
 class SettingsPublic(BaseModel):
@@ -250,4 +254,25 @@ class HomepageSectionUpdate(BaseModel):
 
 
 class HomepagePublic(BaseModel):
+    sections: dict[str, dict]
+
+
+class AmcPageSectionOut(BaseModel):
+    id: int
+    key: str
+    label: str
+    sort_order: int
+    data: dict
+    updated_at: datetime | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class AmcPageSectionUpdate(BaseModel):
+    label: str | None = None
+    data: dict
+
+
+class AmcPagePublic(BaseModel):
     sections: dict[str, dict]

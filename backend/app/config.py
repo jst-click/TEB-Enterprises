@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     admin_password: str = "admin123"
     cors_origins: str = "http://localhost:5173,http://localhost:5174"
     upload_dir: str = "uploads"
+    # Google Places API — enables live GMB profile (address, rating, reviews, photos)
+    google_maps_api_key: str = ""
+    google_place_id: str = ""
+    google_place_query: str = (
+        "Team Experts Bangalore ENTERPRISES, Varthur, Devasthanagalu, Bengaluru"
+    )
 
     model_config = SettingsConfigDict(
         env_file=str(ROOT / ".env"),

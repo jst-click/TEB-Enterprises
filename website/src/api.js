@@ -63,6 +63,20 @@ export async function getPublicHomepage() {
   return res.json()
 }
 
+export async function getPublicAmcPage() {
+  const res = await fetch(`${API_BASE}/api/amc-page/public`)
+  if (!res.ok) throw new Error('Failed to load AMC page')
+  return res.json()
+}
+
+/** Live Google Business Profile (Places API when key configured, else server seed). */
+export async function getGmbProfile(refresh = false) {
+  const qs = refresh ? '?refresh=true' : ''
+  const res = await fetch(`${API_BASE}/api/gmb/profile${qs}`)
+  if (!res.ok) throw new Error('Failed to load Google Business Profile')
+  return res.json()
+}
+
 export function mediaUrl(path) {
   if (!path) return ''
   if (path.startsWith('http')) return path

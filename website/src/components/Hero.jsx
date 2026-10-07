@@ -65,7 +65,7 @@ export function Hero() {
             <circle cx="200" cy="200" r="104" fill="none" stroke="rgba(10,22,38,.12)" strokeWidth="1" />
           </svg>
           <div className="perimeter-core">
-            <img src="/logo.png" alt="TEB Enterprises" />
+            <img src="/logo.png" alt="TEB Enterprises — Best Pest Control Services in Bangalore logo" />
             <div className="st">{data.core_label}</div>
           </div>
           {nodes[0] && <div className="node n1"><i>01</i> {nodes[0]}</div>}

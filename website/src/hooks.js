@@ -12,10 +12,19 @@ export function useReveal(ready = true) {
           }
         })
       },
-      { threshold: 0.12 },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' },
     )
-    document.querySelectorAll('.rv').forEach((el) => io.observe(el))
-    return () => io.disconnect()
+    const observeAll = () => {
+      document.querySelectorAll('.rv:not(.in)').forEach((el) => io.observe(el))
+    }
+    observeAll()
+    // Catch sections that mount after async data (e.g. GMB profile)
+    const mo = new MutationObserver(() => observeAll())
+    mo.observe(document.body, { childList: true, subtree: true })
+    return () => {
+      mo.disconnect()
+      io.disconnect()
+    }
   }, [ready])
 }
 

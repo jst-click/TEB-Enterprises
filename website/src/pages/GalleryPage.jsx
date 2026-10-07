@@ -35,7 +35,7 @@ export default function GalleryPage() {
             <article className="card" key={item.id} style={{ padding: 0, overflow: 'hidden' }}>
               <img
                 src={mediaUrl(item.image_url)}
-                alt={item.title}
+                alt={item.title || 'TEB Enterprises pest control gallery image'}
                 style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover' }}
               />
               <div style={{ padding: 22 }}>

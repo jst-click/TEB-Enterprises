@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getPublicBlog, getPublicBlogs, mediaUrl } from '../api'
 import { useReveal } from '../hooks'
+import { BLOGS_META } from '../seo/blogsPageSeo'
+import SeoHead from '../seo/SeoHead'
 import NotFound from './NotFound'
 
 export function BlogsPage() {
@@ -18,46 +20,56 @@ export function BlogsPage() {
   }, [])
 
   return (
-    <section style={{ paddingTop: 'clamp(40px,6vw,72px)' }}>
-      <div className="wrap">
-        <div className="sec-head rv">
-          <p className="eyebrow">Blog</p>
-          <h2>Notes from the field.</h2>
-          <p className="lede">Guides, tips and updates from TEB Enterprises.</p>
-        </div>
+    <>
+      <SeoHead
+        title={BLOGS_META.title}
+        description={BLOGS_META.description}
+        path={BLOGS_META.path}
+        image={BLOGS_META.image}
+      />
+      <section style={{ paddingTop: 'clamp(40px,6vw,72px)' }}>
+        <div className="wrap">
+          <div className="sec-head rv">
+            <p className="eyebrow">Blog</p>
+            <h2>Notes from the field.</h2>
+            <p className="lede">
+              All guides, tips and updates from TEB Enterprises — every published post lives under this blog category.
+            </p>
+          </div>
 
-        {loading && <p className="lede">Loading posts…</p>}
-        {error && <p className="lede">{error}</p>}
-        {!loading && !error && !items.length && (
-          <p className="lede">No blog posts published yet.</p>
-        )}
+          {loading && <p className="lede">Loading posts…</p>}
+          {error && <p className="lede">{error}</p>}
+          {!loading && !error && !items.length && (
+            <p className="lede">No blog posts published yet.</p>
+          )}
 
-        <div className="grid-2 rv" style={{ marginBottom: 48 }}>
-          {items.map((post) => (
-            <Link
-              key={post.id}
-              to={`/blogs/${post.slug}`}
-              className="card"
-              style={{ textDecoration: 'none', display: 'block', padding: 0, overflow: 'hidden' }}
-            >
-              {post.cover_image && (
-                <img
-                  src={mediaUrl(post.cover_image)}
-                  alt={post.title}
-                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }}
-                />
-              )}
-              <div style={{ padding: 24 }}>
-                <h3 style={{ marginBottom: 10 }}>{post.title}</h3>
-                <p style={{ margin: 0, color: 'var(--muted)', fontSize: '.95rem' }}>
-                  {post.excerpt || post.content.slice(0, 140) + '…'}
-                </p>
-              </div>
-            </Link>
-          ))}
+          <div className="grid-2 rv" style={{ marginBottom: 48 }}>
+            {items.map((post) => (
+              <Link
+                key={post.id}
+                to={`/blogs/${post.slug}`}
+                className="card"
+                style={{ textDecoration: 'none', display: 'block', padding: 0, overflow: 'hidden' }}
+              >
+                {post.cover_image && (
+                  <img
+                    src={mediaUrl(post.cover_image)}
+                    alt={post.title || 'TEB Enterprises pest control blog article'}
+                    style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }}
+                  />
+                )}
+                <div style={{ padding: 24 }}>
+                  <h3 style={{ marginBottom: 10 }}>{post.title}</h3>
+                  <p style={{ margin: 0, color: 'var(--muted)', fontSize: '.95rem' }}>
+                    {post.excerpt || post.content.slice(0, 140) + '…'}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }
 
@@ -93,7 +105,7 @@ export function BlogDetailPage() {
         {post.cover_image && (
           <img
             src={mediaUrl(post.cover_image)}
-            alt={post.title}
+            alt={post.title || 'TEB Enterprises pest control blog article'}
             style={{ width: '100%', borderRadius: 14, marginBottom: 28 }}
           />
         )}

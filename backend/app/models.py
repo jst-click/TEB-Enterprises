@@ -52,6 +52,8 @@ class SiteSettings(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     whatsapp_number: Mapped[str] = mapped_column(String(32), default="917996688885")
     contact_email: Mapped[str] = mapped_column(String(255), default="sales@teamcleaningexperts.in")
+    # JSON array of full URLs for sitemap.xml (admin-managed)
+    sitemap_urls: Mapped[str | None] = mapped_column(Text, nullable=True, default="[]")
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -77,6 +79,19 @@ class ContactEnquiry(Base):
 
 class HomepageSection(Base):
     __tablename__ = "homepage_sections"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    key: Mapped[str] = mapped_column(String(60), unique=True, index=True)
+    label: Mapped[str] = mapped_column(String(120))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    data: Mapped[str] = mapped_column(Text, default="{}")  # JSON payload
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class AmcPageSection(Base):
+    __tablename__ = "amc_page_sections"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     key: Mapped[str] = mapped_column(String(60), unique=True, index=True)

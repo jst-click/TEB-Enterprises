@@ -74,8 +74,43 @@ DEFAULT_SECTIONS: list[dict] = [
         },
     },
     {
+        "key": "trust",
+        "label": "4. Trusted intro",
+        "sort_order": 35,
+        "data": {
+            "eyebrow": "Trusted pest control",
+            "title": "Trusted Pest Control Company in Bangalore for Homes & Businesses",
+            "lede": (
+                p(
+                    "Pest problems are different for every property. A kitchen, apartment, office, "
+                    "restaurant and warehouse all require a different inspection approach and treatment plan."
+                )
+                + p(
+                    "TEB provides reliable pest control Bangalore solutions using inspection-based treatment, "
+                    "Integrated Pest Management and preventive service programmes with inspection-based "
+                    "solutions for residential and commercial properties. Our team identifies pest activity, "
+                    "entry points, breeding areas and risk factors before recommending the right treatment."
+                )
+                + p(
+                    "Whether you need one-time pest control, termite protection, mosquito management or a "
+                    "long-term AMC programme, we build the service around your property requirements."
+                )
+            ),
+            "audiences_label": "Who we serve",
+            "audiences": [
+                "Homes & apartments",
+                "Corporate offices",
+                "Restaurants & hotels",
+                "Factories & warehouses",
+                "Hospitals & institutions",
+                "IT parks & commercial buildings",
+            ],
+            "primary_cta": "Book an inspection",
+        },
+    },
+    {
         "key": "pests",
-        "label": "4. Pest finder",
+        "label": "5. Pest finder",
         "sort_order": 40,
         "data": {
             "eyebrow": "Pest finder",
@@ -365,8 +400,66 @@ DEFAULT_SECTIONS: list[dict] = [
         },
     },
     {
+        "key": "pricing",
+        "label": "6. Pricing range",
+        "sort_order": 55,
+        "data": {
+            "eyebrow": "Pricing guide",
+            "title": "Common Pest Control Bangalore Price Range",
+            "lede": p(
+                "Pest control Bangalore price range depends on the pest type, property size, "
+                "infestation level, and treatment required. Get a customized quote from our experts "
+                "after understanding your specific requirement."
+            ),
+            "columns": ["Pest Control Service", "Pricing Information", "Get Quote"],
+            "rows": [
+                {
+                    "service": "Cockroach Control",
+                    "pricing": "Customized Pricing Based on Inspection",
+                    "quote_label": "WhatsApp Us",
+                },
+                {
+                    "service": "General Pest Control",
+                    "pricing": "Depends on Property Size & Treatment Required",
+                    "quote_label": "WhatsApp Us",
+                },
+                {
+                    "service": "Bed Bug Treatment",
+                    "pricing": "Quote Based on Infestation Level",
+                    "quote_label": "WhatsApp Us",
+                },
+                {
+                    "service": "Rodent Control",
+                    "pricing": "Project-Based Pricing",
+                    "quote_label": "WhatsApp Us",
+                },
+                {
+                    "service": "Mosquito Control",
+                    "pricing": "Depends on Area Coverage & Requirement",
+                    "quote_label": "WhatsApp Us",
+                },
+                {
+                    "service": "Termite Treatment",
+                    "pricing": "Inspection Required for Accurate Pricing",
+                    "quote_label": "WhatsApp Us",
+                },
+            ],
+            "cta_title": "Get Your Pest Control Quote in Bangalore",
+            "cta_text": (
+                "<p>Looking for reliable pest control services near you? Send us your "
+                "<strong>pest problem, property type, property size, and Bangalore location</strong> "
+                "on WhatsApp. Our team will provide the right treatment plan and quotation.</p>"
+            ),
+            "cta_label": "Get Instant Quote on WhatsApp",
+            "whatsapp_message": (
+                "Hi TEB Enterprises, I need a pest control quote in Bangalore. "
+                "Pest problem: , Property type: , Size: , Location: "
+            ),
+        },
+    },
+    {
         "key": "sectors",
-        "label": "6. Sectors",
+        "label": "7. Sectors",
         "sort_order": 60,
         "data": {
             "eyebrow": "Sectors",
@@ -397,8 +490,47 @@ DEFAULT_SECTIONS: list[dict] = [
         },
     },
     {
+        "key": "why_choose",
+        "label": "8. Why choose TEB",
+        "sort_order": 65,
+        "data": {
+            "eyebrow": "Why TEB",
+            "title": "Why Choose TEB as the Best Pest Control Bangalore Company?",
+            "lede": (
+                "<p>Finding the <strong>best pest control provider in Bangalore</strong> requires more than temporary spraying.</p>"
+                "<p>TEB Pest Control follows an inspection-first approach to deliver reliable pest management solutions.</p>"
+            ),
+            "items": [
+                {
+                    "title": "Inspection before treatment",
+                    "text": "We identify pest activity, hiding locations, entry points and contributing conditions before selecting treatment methods.",
+                },
+                {
+                    "title": "Solutions for homes and businesses",
+                    "text": "From apartments and villas to factories, warehouses and IT parks, our programmes are designed for different property environments.",
+                },
+                {
+                    "title": "Integrated Pest Management approach",
+                    "text": "We focus on reducing pest sources through monitoring, sanitation recommendations, exclusion and targeted treatments.",
+                },
+                {
+                    "title": "Documentation for commercial clients",
+                    "text": "Businesses receive service reports, observations, treatment details and recommendations where required.",
+                },
+                {
+                    "title": "Bangalore-wide service coverage",
+                    "text": "Our team supports residential and commercial properties across major Bengaluru locations.",
+                },
+            ],
+            "closing": (
+                "<p>For customers searching for the <strong>best pest control near me</strong>, "
+                "our team provides reliable pest management support across Bengaluru.</p>"
+            ),
+        },
+    },
+    {
         "key": "ipm",
-        "label": "7. IPM",
+        "label": "9. IPM",
         "sort_order": 70,
         "data": {
             "eyebrow": "Integrated Pest Management",
@@ -534,11 +666,18 @@ DEFAULT_SECTIONS: list[dict] = [
                 {"q": "Do I need to leave the property during treatment?", "a": p("It depends on the method used. Our team gives you the required vacancy and re-entry instructions before service.")},
                 {"q": "How long does treatment take?", "a": p("Duration depends on property size, pest type, infestation level and the treatment method.")},
                 {"q": "Will one treatment solve the problem completely?", "a": p("Some infestations are controlled in one service. Others — particularly bedbugs, termites, rodents and severe cockroach infestations — need multiple visits and preventive action.")},
-                {"q": "Do you provide termite treatment?", "a": p("Yes. We provide both pre-construction and post-construction termite-control services.")},
+                {"q": "Which Company provides Best pest control near me?", "a": p("The right pest control provider depends on inspection quality, treatment methods, service experience and follow-up support. TEB provides professional pest management services across Bangalore.")},
                 {"q": "Do you provide documentation for companies?", "a": p("Yes. Commercial service documentation is provided according to the agreed scope and contract requirements.")},
                 {"q": "What should I do before the service?", "a": p("Preparation depends on the treatment. Our team shares instructions covering food, utensils, furniture access, children, pets and re-entry requirements.")},
                 {"q": "Why are pests returning after treatment?", "a": p("Usually because of untreated breeding sources, neighbouring infestations, structural entry points, waste-handling problems, moisture, available food, or an incomplete follow-up. We can inspect the cause and recommend corrective measures.")},
                 {"q": "Do you provide emergency pest control?", "a": p("Priority service may be arranged depending on team availability, site location and pest type.")},
+                {"q": "How can I find pest control services near me?", "a": p("TEB provides pest control services near me across Bangalore localities including residential and commercial areas.")},
+                {"q": "How much do pest control services Bangalore usually cost?", "a": p("The pest control Bangalore price depends on the pest problem, property size and treatment requirements.")},
+                {"q": "What are the best pest control services Bangalore residents can choose for homes and businesses?", "a": p("TEB provides reliable pest control services Bangalore customers can use for homes, apartments, offices, restaurants, warehouses and commercial properties. Our services include cockroach control, termite treatment, bedbug treatment, rodent control, mosquito management and customised pest management plans.")},
+                {"q": "How can I book Cockroach Pest Control Services in Bangalore?", "a": p("To book Cockroach pest control Bangalore, contact TEB Pest Control for a site inspection and quotation. Our technicians assess the pest issue, recommend the right treatment and provide solutions based on your property type and infestation level.")},
+                {"q": "Why choose professional pest control services in Bangalore for pest problems?", "a": p("Professional pest control Bangalore help identify the pest source and provide targeted treatment for long-lasting results. TEB Pest Control offers inspection-based solutions, preventive treatments and scheduled pest management support across Bengaluru.")},
+                {"q": "Where can I get trusted pest control services near me in Bangalore?", "a": p("TEB offers professional pest control services in Bangalore across major Bengaluru areas for residential and commercial properties. Our technicians inspect the pest issue, recommend the right treatment and provide effective pest management solutions.")},
+                {"q": "What should I check before booking the best pest control near me?", "a": p("Before booking the best pest control near me, check the company's experience, treatment approach, service coverage, safety guidance and customer support. TEB provides customised pest management solutions based on your property type and pest issue across Bangalore.")},
             ],
         },
     },
@@ -596,6 +735,16 @@ def seed_homepage(db: Session, *, force: bool = False) -> None:
                 row.label = section["label"]
                 row.sort_order = section["sort_order"]
                 row.data = payload
+            elif section["key"] == "faq":
+                # Refresh FAQ list when schema/SEO FAQ set grows
+                try:
+                    current = json.loads(row.data or "{}")
+                    new_items = section["data"].get("items") or []
+                    old_items = current.get("items") or []
+                    if len(new_items) > len(old_items):
+                        row.data = payload
+                except json.JSONDecodeError:
+                    row.data = payload
             continue
         db.add(
             HomepageSection(

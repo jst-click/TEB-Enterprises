@@ -8,10 +8,24 @@ from .auth import hash_password
 from .config import settings
 from .database import Base, SessionLocal, engine
 from .models import Admin, SiteSettings
-from .routers import auth, blogs, contacts, gallery, homepage, nav, seo, services, settings as settings_router, uploads
-from .routers.settings import DEFAULT_EMAIL, DEFAULT_WHATSAPP
+from .routers import (
+    amc_page,
+    auth,
+    blogs,
+    contacts,
+    gallery,
+    gmb,
+    homepage,
+    nav,
+    seo,
+    services,
+    settings as settings_router,
+    uploads,
+)
+from .routers.settings import DEFAULT_EMAIL, DEFAULT_SITEMAP_URLS, DEFAULT_WHATSAPP, dump_sitemap_urls, ensure_sitemap_urls
+from .seed_amc_page import seed_amc_page as seed_amc_page_data
 from .seed_homepage import seed_homepage as seed_homepage_data
-from .seed_services import seed_services as seed_services_data
+from .seed_services import ensure_service_cover_images, seed_services as seed_services_data
 
 app = FastAPI(title="TEB Enterprises API", version="1.0.0")
 
@@ -35,7 +49,9 @@ app.include_router(settings_router.router)
 app.include_router(contacts.router)
 app.include_router(services.router)
 app.include_router(homepage.router)
+app.include_router(amc_page.router)
 app.include_router(seo.router)
+app.include_router(gmb.router)
 
 
 def seed_admin() -> None:
@@ -62,9 +78,12 @@ def seed_settings() -> None:
                 SiteSettings(
                     whatsapp_number=DEFAULT_WHATSAPP,
                     contact_email=DEFAULT_EMAIL,
+                    sitemap_urls=dump_sitemap_urls(DEFAULT_SITEMAP_URLS),
                 )
             )
             db.commit()
+        else:
+            ensure_sitemap_urls(db)
     finally:
         db.close()
 
@@ -73,6 +92,7 @@ def seed_services() -> None:
     db = SessionLocal()
     try:
         seed_services_data(db)
+        ensure_service_cover_images(db)
     finally:
         db.close()
 
@@ -85,8 +105,16 @@ def seed_homepage() -> None:
         db.close()
 
 
+def seed_amc_page() -> None:
+    db = SessionLocal()
+    try:
+        seed_amc_page_data(db)
+    finally:
+        db.close()
+
+
 def ensure_schema() -> None:
-    columns = {
+    service_columns = {
         "cover_image": "VARCHAR(500)",
         "scope_title": "VARCHAR(255)",
         "about_eyebrow": "VARCHAR(120)",
@@ -108,8 +136,11 @@ def ensure_schema() -> None:
         "cta_text": "TEXT",
     }
     with engine.begin() as conn:
-        for name, col_type in columns.items():
+        for name, col_type in service_columns.items():
             conn.execute(text(f"ALTER TABLE services ADD COLUMN IF NOT EXISTS {name} {col_type}"))
+        conn.execute(
+            text("ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS sitemap_urls TEXT")
+        )
 
 
 @app.on_event("startup")
@@ -120,6 +151,7 @@ def on_startup() -> None:
     seed_settings()
     seed_services()
     seed_homepage()
+    seed_amc_page()
 
 
 @app.get("/api/health")

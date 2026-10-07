@@ -182,7 +182,16 @@ export default function BlogsAdmin() {
           </p>
           <h1 className="text-4xl font-extrabold m-0">Blog posts</h1>
           <p className="text-[var(--muted)] text-sm mt-2 m-0">
-            Create and manage articles shown on the website.
+            Published posts appear under{' '}
+            <a
+              href="https://tebpestcontrol.com/blogs"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[var(--orange)] underline-offset-2 hover:underline"
+            >
+              /blogs
+            </a>{' '}
+            and are added to sitemap.xml automatically.
           </p>
         </div>
         <button
@@ -292,7 +301,7 @@ export default function BlogsAdmin() {
                 <div className="min-w-0">
                   <h3 className="font-bold text-base m-0 truncate">{item.title}</h3>
                   <p className="text-sm text-[var(--muted)] m-0 mt-0.5 truncate">
-                    /{item.slug}
+                    /blogs/{item.slug}
                     {item.excerpt ? ` · ${item.excerpt}` : ''}
                   </p>
                 </div>

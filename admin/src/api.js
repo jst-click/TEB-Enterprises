@@ -92,6 +92,11 @@ export const api = {
     get: (key) => request(`/api/homepage/${key}`),
     update: (key, payload) => request(`/api/homepage/${key}`, { method: 'PUT', body: payload }),
   },
+  amcPage: {
+    list: () => request('/api/amc-page/'),
+    get: (key) => request(`/api/amc-page/${key}`),
+    update: (key, payload) => request(`/api/amc-page/${key}`, { method: 'PUT', body: payload }),
+  },
   upload: async (file) => {
     const fd = new FormData()
     fd.append('file', file)
