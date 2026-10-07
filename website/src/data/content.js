@@ -12,7 +12,6 @@ export const SITE = {
   officeEmail: 'tebenterprises711984@gmail.com',
   website: 'https://www.teamcleaningexperts.in',
   gstin: '29AXXPG2780R1Z9',
-  contactPerson: 'Mr. Nanda Kumar',
   hours: 'Mon–Sun, 8:00 AM – 8:00 PM',
   social: {
     facebook: 'https://www.facebook.com/tebenterprises/?locale=fr_FR',

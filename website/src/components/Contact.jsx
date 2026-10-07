@@ -234,7 +234,6 @@ export function Contact() {
             <h3>{copy.aside_title}</h3>
             <Html as="div" className="contact-sec__hint" html={copy.aside_text} />
             <div className="cinfo">
-              <div><span>Contact person</span><p>{SITE.contactPerson}</p></div>
               <div>
                 <span>Mobile</span>
                 <p>

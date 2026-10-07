@@ -307,7 +307,6 @@ function LayoutInner({ children }) {
             <div>
               <h4>Contact</h4>
               <ul>
-                <li>{SITE.contactPerson}</li>
                 <li><a href={SITE.phoneHref}>{SITE.phone}</a></li>
                 <li><a href={SITE.phone2Href}>{SITE.phone2}</a></li>
                 <li><a href={`mailto:${SITE.salesEmail}`}>{SITE.salesEmail}</a></li>

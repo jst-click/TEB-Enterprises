@@ -136,7 +136,7 @@ export default function AboutPage() {
             <p className="eyebrow on-dark">Talk to us</p>
             <h2 style={{ color: '#fff' }}>Ready to protect your property?</h2>
             <p style={{ color: 'rgba(255,255,255,.7)', maxWidth: '52ch', marginTop: 12 }}>
-              Call {SITE.contactPerson} on {SITE.phone}, or send an enquiry — we cover major Bengaluru localities.
+              Call {SITE.phone}, or send an enquiry — we cover major Bengaluru localities.
             </p>
           </div>
           <div className="rv" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
