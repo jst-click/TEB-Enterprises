@@ -55,17 +55,19 @@ app.include_router(gmb.router)
 
 
 def seed_admin() -> None:
+    """Create or sync the admin account from ADMIN_EMAIL / ADMIN_PASSWORD settings."""
     db = SessionLocal()
     try:
-        existing = db.query(Admin).filter(Admin.email == settings.admin_email).first()
-        if not existing:
-            db.add(
-                Admin(
-                    email=settings.admin_email,
-                    hashed_password=hash_password(settings.admin_password),
-                )
-            )
-            db.commit()
+        hashed = hash_password(settings.admin_password)
+        admin = db.query(Admin).filter(Admin.email == settings.admin_email).first()
+        if not admin:
+            admin = db.query(Admin).first()
+        if admin:
+            admin.email = settings.admin_email
+            admin.hashed_password = hashed
+        else:
+            db.add(Admin(email=settings.admin_email, hashed_password=hashed))
+        db.commit()
     finally:
         db.close()
 

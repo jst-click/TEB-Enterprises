@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     secret_key: str = "teb-enterprises-change-me-in-production-2026"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24
-    admin_email: str = "admin@tebenterprises.in"
-    admin_password: str = "admin123"
+    admin_email: str = "admin@tebpestcontrol.com"
+    admin_password: str = "TEB@2026"
     cors_origins: str = "http://localhost:5173,http://localhost:5174"
     upload_dir: str = "uploads"
     # Google Places API — enables live GMB profile (address, rating, reviews, photos)
