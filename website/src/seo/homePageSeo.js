@@ -1,5 +1,3 @@
-import { GMB_URL } from '../components/GmbLink'
-import { SITE } from '../data/content'
 import { buildFaqSchema } from './faqSchema'
 import { HOME_FAQS } from './homeFaqs'
 
@@ -32,25 +30,10 @@ export const HOME_META = {
   ].join(', '),
 }
 
+/**
+ * Home-only schemas. Organization + LocalBusiness/Review live in Layout (globalSchemas).
+ */
 export function buildHomeSchemas(faqItems = HOME_FAQS) {
-  const organization = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Teb Pest Control',
-    alternateName: 'TEB Enterprises',
-    url: 'https://tebpestcontrol.com/',
-    logo: 'https://tebpestcontrol.com/logo.png',
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+91-79966-88885',
-      contactType: 'customer service',
-      contactOption: 'TollFree',
-      areaServed: 'IN',
-      availableLanguage: ['en', 'hi'],
-    },
-    sameAs: [SITE.social.facebook, SITE.social.instagram, GMB_URL].filter(Boolean),
-  }
-
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -79,41 +62,5 @@ export function buildHomeSchemas(faqItems = HOME_FAQS) {
     dateModified: '2026-07-01',
   }
 
-  // LocalBusiness + AggregateRating (valid review schema for Google)
-  const review = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Teb Pest Control',
-    alternateName: 'TEB Enterprises',
-    url: 'https://tebpestcontrol.com/',
-    image: 'https://tebpestcontrol.com/logo.png',
-    telephone: '+91-79966-88885',
-    priceRange: '₹₹',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Varthur, Devasthanagalu, Bengaluru',
-      postalCode: '560087',
-      addressRegion: 'Karnataka',
-      addressCountry: 'IN',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 12.9398,
-      longitude: 77.7412,
-    },
-    areaServed: {
-      '@type': 'City',
-      name: 'Bangalore',
-    },
-    sameAs: [GMB_URL, SITE.social.facebook, SITE.social.instagram].filter(Boolean),
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      bestRating: '5.0',
-      worstRating: '1.0',
-      reviewCount: '232',
-    },
-  }
-
-  return [organization, article, review, buildFaqSchema(faqItems)]
+  return [article, buildFaqSchema(faqItems)]
 }

@@ -12,14 +12,21 @@ export async function getPublicGallery() {
   return res.json()
 }
 
-export async function getPublicBlogs() {
-  const res = await fetch(`${API_BASE}/api/blogs/public`)
+export async function getPublicBlogs(category) {
+  const qs = category ? `?category=${encodeURIComponent(category)}` : ''
+  const res = await fetch(`${API_BASE}/api/blogs/public${qs}`)
   if (!res.ok) throw new Error('Failed to load blogs')
   return res.json()
 }
 
+export async function getPublicBlogCategories() {
+  const res = await fetch(`${API_BASE}/api/blogs/public/categories`)
+  if (!res.ok) return []
+  return res.json()
+}
+
 export async function getPublicBlog(slug) {
-  const res = await fetch(`${API_BASE}/api/blogs/public/${slug}`)
+  const res = await fetch(`${API_BASE}/api/blogs/public/${encodeURIComponent(slug)}`)
   if (!res.ok) throw new Error('Blog not found')
   return res.json()
 }

@@ -39,6 +39,13 @@ class Blog(Base):
     excerpt: Mapped[str | None] = mapped_column(Text, nullable=True)
     content: Mapped[str] = mapped_column(Text)
     cover_image: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    cover_image_alt: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    category: Mapped[str | None] = mapped_column(String(120), nullable=True, index=True)
+    meta_title: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    meta_description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    focus_keyword: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    canonical_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    schema_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_published: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(

@@ -55,6 +55,13 @@ class BlogBase(BaseModel):
     excerpt: str | None = None
     content: str = Field(..., min_length=1)
     cover_image: str | None = None
+    cover_image_alt: str | None = None
+    category: str | None = None
+    meta_title: str | None = None
+    meta_description: str | None = None
+    focus_keyword: str | None = None
+    canonical_url: str | None = None
+    schema_json: str | None = None
     is_published: bool = True
 
 
@@ -68,6 +75,13 @@ class BlogUpdate(BaseModel):
     excerpt: str | None = None
     content: str | None = None
     cover_image: str | None = None
+    cover_image_alt: str | None = None
+    category: str | None = None
+    meta_title: str | None = None
+    meta_description: str | None = None
+    focus_keyword: str | None = None
+    canonical_url: str | None = None
+    schema_json: str | None = None
     is_published: bool | None = None
 
 

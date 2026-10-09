@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { getNavFlags } from '../api'
 import { EnquiryProvider, useEnquiry } from '../context/EnquiryContext'
 import { SITE } from '../data/content'
+import JsonLd from '../seo/JsonLd'
+import { buildGlobalSchemas } from '../seo/globalSchemas'
 import { GMB_URL } from './GmbLink'
 import { useScrollChrome } from '../hooks'
 import EnquiryModal from './EnquiryModal'
@@ -57,6 +59,7 @@ function LayoutInner({ children }) {
   const location = useLocation()
   const { openEnquiry } = useEnquiry()
   const dropRefs = useRef({})
+  const globalSchemas = useMemo(() => buildGlobalSchemas(), [])
 
   useEffect(() => {
     getNavFlags().then(setNavFlags).catch(() => {})
@@ -106,6 +109,9 @@ function LayoutInner({ children }) {
 
   return (
     <>
+      {/* Organization + LocalBusiness/Review — site-wide in <head> on every page */}
+      <JsonLd id="global-seo-ld" data={globalSchemas} />
+
       <div id="prog" style={{ width: `${progress}%` }} />
 
       <div className="topbar">

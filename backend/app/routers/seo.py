@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from xml.sax.saxutils import escape
 
 from fastapi import APIRouter, Depends, Response
@@ -11,6 +11,14 @@ from .settings import DEFAULT_SITEMAP_URLS, parse_sitemap_urls
 router = APIRouter(tags=["seo"])
 
 SITE_URL = "https://tebpestcontrol.com"
+
+CATEGORY_PATHS = (
+    "/services?category=location",
+    "/services?category=pest",
+    "/services?category=residential",
+    "/services?category=commercial",
+    "/services?category=amc",
+)
 
 
 def _robots_body() -> str:
@@ -28,11 +36,11 @@ def robots_txt():
 
 
 def _priority_for(loc: str) -> str:
-    path = loc.replace(SITE_URL, "").rstrip("/") or "/"
+    path = loc.replace(SITE_URL, "") or "/"
     if path == "/":
         return "1.0"
-    if path == "/services":
-        return "0.9"
+    if path == "/services" or path.startswith("/services?"):
+        return "0.9" if path == "/services" else "0.85"
     if path == "/blogs":
         return "0.8"
     if path.startswith("/blogs/"):
@@ -40,6 +48,51 @@ def _priority_for(loc: str) -> str:
     if path in ("/gallery", "/about-us", "/contact-us"):
         return "0.7"
     return "0.8"
+
+
+def _fmt_day(value) -> str:
+    """Safe YYYY-MM-DD for lastmod — never raises."""
+    if value is None:
+        return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d")
+    if isinstance(value, date):
+        return value.strftime("%Y-%m-%d")
+    try:
+        return str(value)[:10]
+    except Exception:
+        return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+
+def _fallback_sitemap_xml() -> str:
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    locs = [
+        f"{SITE_URL}/",
+        f"{SITE_URL}/services",
+        *[f"{SITE_URL}{p}" for p in CATEGORY_PATHS],
+        f"{SITE_URL}/gallery",
+        f"{SITE_URL}/blogs",
+        f"{SITE_URL}/about-us",
+        f"{SITE_URL}/contact-us",
+        *DEFAULT_SITEMAP_URLS,
+    ]
+    parts = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    seen: set[str] = set()
+    for loc in locs:
+        key = loc if loc.endswith("/") or "?" in loc else loc.rstrip("/")
+        if key in seen:
+            continue
+        seen.add(key)
+        parts.append("  <url>")
+        parts.append(f"    <loc>{escape(key)}</loc>")
+        parts.append(f"    <lastmod>{now}</lastmod>")
+        parts.append(f"    <priority>{_priority_for(key)}</priority>")
+        parts.append("  </url>")
+    parts.append("</urlset>")
+    return "\n".join(parts) + "\n"
 
 
 def published_blog_urls(db: Session) -> list[tuple[str, str]]:
@@ -52,64 +105,91 @@ def published_blog_urls(db: Session) -> list[tuple[str, str]]:
     )
     out: list[tuple[str, str]] = []
     for b in blogs:
-        lastmod = (b.updated_at or b.created_at or datetime.now(timezone.utc)).strftime("%Y-%m-%d")
-        out.append((f"{SITE_URL}/blogs/{b.slug}", lastmod))
+        slug = (b.slug or "").strip()
+        if not slug:
+            continue
+        lastmod = _fmt_day(b.updated_at or b.created_at)
+        out.append((f"{SITE_URL}/blogs/{slug}", lastmod))
     return out
 
 
 @router.get("/sitemap.xml", response_class=Response)
 def sitemap_xml(db: Session = Depends(get_db)):
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    # loc -> (lastmod, priority); first write wins
-    entries: dict[str, tuple[str, str]] = {}
+    """Always return valid XML — never 500 for GSC."""
+    try:
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        entries: dict[str, tuple[str, str]] = {}
 
-    def add(loc: str, lastmod: str | None = None, priority: str | None = None) -> None:
-        key = loc.rstrip("/") if loc.rstrip("/") != SITE_URL else f"{SITE_URL}/"
-        if key in entries:
-            return
-        entries[key] = (lastmod or now, priority or _priority_for(key))
+        def add(loc: str, lastmod: str | None = None, priority: str | None = None) -> None:
+            raw = (loc or "").strip()
+            if not raw:
+                return
+            if raw.rstrip("/") == SITE_URL:
+                key = f"{SITE_URL}/"
+            elif "?" in raw:
+                key = raw
+            else:
+                key = raw.rstrip("/")
+            if key in entries:
+                return
+            entries[key] = (lastmod or now, priority or _priority_for(key))
 
-    # Core index pages
-    add(f"{SITE_URL}/", now, "1.0")
-    add(f"{SITE_URL}/services", now, "0.9")
-    add(f"{SITE_URL}/gallery", now, "0.7")
-    add(f"{SITE_URL}/about-us", now, "0.7")
-    add(f"{SITE_URL}/contact-us", now, "0.7")
+        add(f"{SITE_URL}/", now, "1.0")
+        add(f"{SITE_URL}/services", now, "0.9")
+        for path in CATEGORY_PATHS:
+            add(f"{SITE_URL}{path}", now, "0.85")
+        add(f"{SITE_URL}/gallery", now, "0.7")
+        add(f"{SITE_URL}/about-us", now, "0.7")
+        add(f"{SITE_URL}/contact-us", now, "0.7")
 
-    # Blog category index + every published post (auto — old & new)
-    add(f"{SITE_URL}/blogs", now, "0.8")
-    for loc, lastmod in published_blog_urls(db):
-        add(loc, lastmod, "0.7")
+        add(f"{SITE_URL}/blogs", now, "0.8")
+        try:
+            for loc, lastmod in published_blog_urls(db):
+                add(loc, lastmod, "0.7")
+        except Exception:
+            pass
 
-    # Admin-managed sitemap URLs (service + area pages)
-    row = db.query(SiteSettings).order_by(SiteSettings.id.asc()).first()
-    admin_urls = parse_sitemap_urls(row.sitemap_urls if row else None)
-    if not admin_urls:
-        admin_urls = list(DEFAULT_SITEMAP_URLS)
-    for url in admin_urls:
-        add(url, now, "0.8")
+        try:
+            row = db.query(SiteSettings).order_by(SiteSettings.id.asc()).first()
+            admin_urls = parse_sitemap_urls(getattr(row, "sitemap_urls", None) if row else None)
+        except Exception:
+            admin_urls = []
+        if not admin_urls:
+            admin_urls = list(DEFAULT_SITEMAP_URLS)
+        for url in admin_urls:
+            add(url, now, "0.8")
 
-    # Published services (covers any not yet added in admin)
-    services = (
-        db.query(Service)
-        .filter(Service.is_published.is_(True))
-        .order_by(Service.sort_order.asc(), Service.id.desc())
-        .all()
-    )
-    for s in services:
-        lastmod = (s.updated_at or s.created_at or datetime.now(timezone.utc)).strftime("%Y-%m-%d")
-        add(f"{SITE_URL}/{s.slug}", lastmod, "0.8")
+        try:
+            services = (
+                db.query(Service)
+                .filter(Service.is_published.is_(True))
+                .order_by(Service.sort_order.asc(), Service.id.desc())
+                .all()
+            )
+            for s in services:
+                slug = (s.slug or "").strip()
+                if not slug:
+                    continue
+                lastmod = _fmt_day(s.updated_at or s.created_at)
+                add(f"{SITE_URL}/{slug}", lastmod, "0.8")
+        except Exception:
+            pass
 
-    parts = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ]
-    for loc, (lastmod, priority) in entries.items():
-        parts.append("  <url>")
-        parts.append(f"    <loc>{escape(loc)}</loc>")
-        parts.append(f"    <lastmod>{lastmod}</lastmod>")
-        parts.append(f"    <priority>{priority}</priority>")
-        parts.append("  </url>")
-    parts.append("</urlset>")
-    xml = "\n".join(parts) + "\n"
-    return Response(content=xml, media_type="application/xml; charset=utf-8")
+        parts = [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ]
+        for loc, (lastmod, priority) in entries.items():
+            parts.append("  <url>")
+            parts.append(f"    <loc>{escape(loc)}</loc>")
+            parts.append(f"    <lastmod>{escape(lastmod)}</lastmod>")
+            parts.append(f"    <priority>{escape(priority)}</priority>")
+            parts.append("  </url>")
+        parts.append("</urlset>")
+        xml = "\n".join(parts) + "\n"
+        return Response(content=xml, media_type="application/xml; charset=utf-8")
+    except Exception:
+        return Response(
+            content=_fallback_sitemap_xml(),
+            media_type="application/xml; charset=utf-8",
+        )

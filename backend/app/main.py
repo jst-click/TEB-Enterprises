@@ -143,6 +143,17 @@ def ensure_schema() -> None:
         conn.execute(
             text("ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS sitemap_urls TEXT")
         )
+        blog_columns = {
+            "cover_image_alt": "VARCHAR(255)",
+            "category": "VARCHAR(120)",
+            "meta_title": "VARCHAR(255)",
+            "meta_description": "TEXT",
+            "focus_keyword": "VARCHAR(160)",
+            "canonical_url": "VARCHAR(500)",
+            "schema_json": "TEXT",
+        }
+        for name, col_type in blog_columns.items():
+            conn.execute(text(f"ALTER TABLE blogs ADD COLUMN IF NOT EXISTS {name} {col_type}"))
 
 
 @app.on_event("startup")

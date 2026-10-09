@@ -44,13 +44,15 @@ export default function SeoHead({
   type = 'website',
   robots = 'index, follow, max-image-preview:large, max-video-preview:-1, max-snippet:-1',
   keywords,
+  canonical,
 }) {
   useEffect(() => {
     const cleanPath = path.startsWith('/') ? path : `/${path}`
     const url =
-      cleanPath === '/'
+      (canonical && String(canonical).trim()) ||
+      (cleanPath === '/'
         ? `${SITE_ORIGIN}/`
-        : `${SITE_ORIGIN}${cleanPath.replace(/\/$/, '')}`
+        : `${SITE_ORIGIN}${cleanPath.replace(/\/$/, '')}`)
 
     document.title = title
     upsertMeta('name', 'title', title)
@@ -74,7 +76,7 @@ export default function SeoHead({
     upsertMeta('property', 'twitter:title', title)
     upsertMeta('property', 'twitter:description', description)
     upsertMeta('property', 'twitter:image', image)
-  }, [title, description, path, image, type, robots, keywords])
+  }, [title, description, path, image, type, robots, keywords, canonical])
 
   return null
 }

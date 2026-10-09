@@ -53,6 +53,52 @@ const CATEGORY_LABELS = {
   package_b2b: 'Business scopes',
 }
 
+/** Per-category H1 + meta title for /services?category=… (client SEO docs). */
+const CATEGORY_PAGE_SEO = {
+  all: {
+    h1: 'Pest control services in Bangalore',
+    title: 'Pest Control Services in Bangalore | TEB Pest Control',
+    description:
+      'Inspection-based pest control in Bangalore for homes and businesses — cockroach, termite, bed bug, rodent, mosquito, ant control and more.',
+    path: '/services',
+  },
+  location: {
+    h1: 'Pest Control Services Across Bangalore Locations',
+    title: 'Explore Our Service Areas | TEB Pest Control',
+    description:
+      'Explore TEB pest control service areas across Bangalore — Whitefield, HSR, Electronic City, Sarjapur, Marathahalli and more localities.',
+    path: '/services?category=location',
+  },
+  pest: {
+    h1: 'Pest Control Treatments for Different Pests in Bangalore',
+    title: 'Pest Control by Pest Type in Bangalore | TEB',
+    description:
+      'Pest control treatments by pest type in Bangalore — cockroach, termite, bed bug, rodent, mosquito, ant and more from TEB Pest Control.',
+    path: '/services?category=pest',
+  },
+  residential: {
+    h1: 'Home Pest Control Solutions for Healthy Living',
+    title: 'Home Protection Options | TEB Pest Control',
+    description:
+      'Home pest control solutions for healthy living in Bangalore — residential treatments and protection options from TEB Pest Control.',
+    path: '/services?category=residential',
+  },
+  commercial: {
+    h1: 'Commercial Pest Control Solutions for Businesses',
+    title: 'Business Protection Options | TEB Pest Control',
+    description:
+      'Commercial pest control solutions for businesses in Bangalore — offices, hotels, restaurants, warehouses and more with TEB Pest Control.',
+    path: '/services?category=commercial',
+  },
+  amc: {
+    h1: 'Annual Pest Control Contracts & Maintenance Plans',
+    title: 'Preventive Maintenance Plans | TEB Pest Control',
+    description:
+      'Annual pest control contracts and preventive maintenance plans (AMC) in Bangalore from TEB Pest Control.',
+    path: '/services?category=amc',
+  },
+}
+
 const DEFAULT_IMAGES = {
   pest: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=70',
   residential: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70',
@@ -160,9 +206,15 @@ export function ServicesIndexPage() {
   }, [items, category, location, locations])
 
   const selectedLocation = locations.find((l) => l.slug === location)
+  const pageSeo = CATEGORY_PAGE_SEO[category] || CATEGORY_PAGE_SEO.all
 
   return (
     <>
+      <SeoHead
+        title={pageSeo.title}
+        description={pageSeo.description}
+        path={pageSeo.path}
+      />
       <section
         style={{
           padding: 'clamp(48px,7vw,90px) 0',
@@ -173,8 +225,8 @@ export function ServicesIndexPage() {
       >
         <div className="wrap">
           <p className="eyebrow on-dark">Services</p>
-          <h1 style={{ fontSize: 'clamp(2.2rem,4.5vw,3.6rem)', maxWidth: '16ch', color: '#fff' }}>
-            Pest control services in Bangalore
+          <h1 style={{ fontSize: 'clamp(2.2rem,4.5vw,3.6rem)', maxWidth: '18ch', color: '#fff' }}>
+            {pageSeo.h1}
           </h1>
           <p className="lede" style={{ marginTop: 16, color: 'rgba(255,255,255,.78)', maxWidth: '58ch' }}>
             Inspection-based treatment for homes and businesses — cockroach, termite, bed bug, rodent,

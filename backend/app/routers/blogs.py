@@ -19,13 +19,23 @@ def slugify(text: str) -> str:
 
 
 @router.get("/public", response_model=list[BlogOut])
-def list_public(db: Session = Depends(get_db)):
-    return (
-        db.query(Blog)
-        .filter(Blog.is_published.is_(True))
-        .order_by(Blog.id.desc())
+def list_public(category: str | None = None, db: Session = Depends(get_db)):
+    q = db.query(Blog).filter(Blog.is_published.is_(True))
+    if category and category.strip():
+        q = q.filter(Blog.category == category.strip())
+    return q.order_by(Blog.id.desc()).all()
+
+
+@router.get("/public/categories", response_model=list[str])
+def list_public_categories(db: Session = Depends(get_db)):
+    rows = (
+        db.query(Blog.category)
+        .filter(Blog.is_published.is_(True), Blog.category.isnot(None), Blog.category != "")
+        .distinct()
+        .order_by(Blog.category.asc())
         .all()
     )
+    return [r[0] for r in rows if r[0]]
 
 
 @router.get("/public/{slug}", response_model=BlogOut)
@@ -39,6 +49,18 @@ def get_public(slug: str, db: Session = Depends(get_db)):
 @router.get("/", response_model=list[BlogOut])
 def list_all(db: Session = Depends(get_db), _: Admin = Depends(get_current_admin)):
     return db.query(Blog).order_by(Blog.id.desc()).all()
+
+
+@router.get("/categories", response_model=list[str])
+def list_categories(db: Session = Depends(get_db), _: Admin = Depends(get_current_admin)):
+    rows = (
+        db.query(Blog.category)
+        .filter(Blog.category.isnot(None), Blog.category != "")
+        .distinct()
+        .order_by(Blog.category.asc())
+        .all()
+    )
+    return [r[0] for r in rows if r[0]]
 
 
 @router.post("/", response_model=BlogOut, status_code=status.HTTP_201_CREATED)
