@@ -51,30 +51,32 @@ export function faqsToPipeText(faqs) {
 
 /**
  * Build Article + FAQPage JSON-LD for a service page.
- * Prefers curated SEO pack; falls back to service API fields.
+ * Prefers admin API fields; falls back to curated SEO pack.
  */
 export function buildServiceSchemas(slug, item, faqPairs = []) {
   const pack = getServiceSeo(slug)
   const url = `https://tebpestcontrol.com/${slug}`
   const image =
-    pack?.image ||
     item?.cover_image ||
     item?.about_image ||
+    pack?.image ||
     'https://tebpestcontrol.com/logo.png'
 
   const headline =
-    pack?.articleHeadline || pack?.title || item?.meta_title || item?.title || 'TEB Enterprises'
+    item?.meta_title ||
+    pack?.articleHeadline ||
+    pack?.title ||
+    item?.title ||
+    'TEB Enterprises'
   const description =
+    item?.meta_description ||
     pack?.articleDescription ||
     pack?.description ||
-    item?.meta_description ||
     item?.summary ||
     ''
 
-  const faqItems =
-    pack?.faqs?.length > 0
-      ? pack.faqs
-      : faqPairs.map(([q, a]) => ({ q, a })).filter((f) => f.q && f.a)
+  const fromAdmin = faqPairs.map(([q, a]) => ({ q, a })).filter((f) => f.q && f.a)
+  const faqItems = fromAdmin.length > 0 ? fromAdmin : pack?.faqs?.length ? pack.faqs : []
 
   const schemas = [
     buildArticleSchema({
@@ -97,23 +99,28 @@ export function buildServiceSchemas(slug, item, faqPairs = []) {
 export function resolveServiceMeta(slug, item) {
   const pack = getServiceSeo(slug)
   const path = `/${slug}`
+  const title = (item?.meta_title || '').trim()
+  const description = (item?.meta_description || '').trim()
+  const keywords = (item?.keywords || '').trim()
   return {
-    title: pack?.title || item?.meta_title || `${item?.title || 'Service'} | TEB Enterprises`,
+    title: title || pack?.title || `${item?.title || 'Service'} | TEB Enterprises`,
     description:
+      description ||
       pack?.description ||
-      item?.meta_description ||
       item?.summary ||
       'Professional pest control services in Bangalore by TEB Enterprises.',
     path,
-    image: pack?.image || item?.cover_image || 'https://tebpestcontrol.com/logo.png',
-    keywords: pack?.keywords || item?.keywords || '',
+    image: item?.cover_image || pack?.image || 'https://tebpestcontrol.com/logo.png',
+    keywords: keywords || pack?.keywords || '',
   }
 }
 
 export function resolveServiceFaqPairs(slug, pipeFaqPairs = []) {
   const pack = getServiceSeo(slug)
+  const fromAdmin = (pipeFaqPairs || []).filter(([q, a]) => q && a)
+  if (fromAdmin.length > 0) return fromAdmin
   if (pack?.faqs?.length) {
     return pack.faqs.map((f) => [f.q, f.a])
   }
-  return pipeFaqPairs
+  return []
 }

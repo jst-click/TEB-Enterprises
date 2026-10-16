@@ -442,6 +442,7 @@ export function ServiceEditPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState(EMPTY)
   const [error, setError] = useState('')
+  const [savedMsg, setSavedMsg] = useState('')
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(!isNew)
   const [uploading, setUploading] = useState(false)
@@ -490,6 +491,7 @@ export function ServiceEditPage() {
   const submit = async (e) => {
     e.preventDefault()
     setError('')
+    setSavedMsg('')
     setSaving(true)
     try {
       const payload = {
@@ -498,14 +500,21 @@ export function ServiceEditPage() {
         cover_image: form.cover_image || null,
         about_image: form.about_image || null,
         faq_items: serializeFaqItems(parseFaqItems(form.faq_items), { keepEmpty: false }) || null,
+        meta_title: form.meta_title?.trim() || null,
+        meta_description: form.meta_description?.trim() || null,
+        keywords: form.keywords?.trim() || null,
+        faq_title: form.faq_title?.trim() || null,
+        faq_eyebrow: form.faq_eyebrow?.trim() || null,
         slug: form.slug || undefined,
         sort_order: Number(form.sort_order) || 0,
       }
       if (isNew) {
         const created = await api.services.create(payload)
+        setSavedMsg('Service created. FAQ & SEO will show on the live page after publish.')
         navigate(`/services/${created.id}/edit`, { replace: true })
       } else {
         await api.services.update(id, payload)
+        setSavedMsg('Saved. FAQ and SEO updates are live on the website now.')
       }
     } catch (err) {
       setError(err.message)
@@ -556,6 +565,11 @@ export function ServiceEditPage() {
 
       {error && (
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>
+      )}
+      {savedMsg && !error && (
+        <div className="mb-4 rounded-xl border border-green-200 bg-green-50 text-green-800 px-4 py-3 text-sm">
+          {savedMsg}
+        </div>
       )}
 
       <div className="flex gap-6 items-start">

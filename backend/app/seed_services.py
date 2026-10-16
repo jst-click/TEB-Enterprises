@@ -1203,6 +1203,7 @@ def ensure_service_seo_packs(db) -> None:
             None,
         ),
     }
+    # Only fill EMPTY fields — never overwrite admin edits on restart.
     changed = False
     for slug, pack in packs.items():
         if not pack:
@@ -1210,22 +1211,21 @@ def ensure_service_seo_packs(db) -> None:
         row = db.query(Service).filter(Service.slug == slug).first()
         if not row:
             continue
-        faq_count = len([l for l in (row.faq_items or "").split("\n") if l.strip()])
-        target_faq = pack.get("faq_items") or ""
-        target_count = len([l for l in target_faq.split("\n") if l.strip()])
-        needs_faq = (not row.faq_items) or (target_count > faq_count)
-        if needs_faq and target_faq:
+        target_faq = (pack.get("faq_items") or "").strip()
+        if not (row.faq_items or "").strip() and target_faq:
             row.faq_items = target_faq
-            row.faq_title = pack.get("faq_title") or row.faq_title
-            row.faq_eyebrow = pack.get("faq_eyebrow") or row.faq_eyebrow
+            if not (row.faq_title or "").strip():
+                row.faq_title = pack.get("faq_title") or row.faq_title
+            if not (row.faq_eyebrow or "").strip():
+                row.faq_eyebrow = pack.get("faq_eyebrow") or row.faq_eyebrow
             changed = True
-        if pack.get("meta_title"):
+        if not (row.meta_title or "").strip() and pack.get("meta_title"):
             row.meta_title = pack["meta_title"]
             changed = True
-        if pack.get("meta_description"):
+        if not (row.meta_description or "").strip() and pack.get("meta_description"):
             row.meta_description = pack["meta_description"]
             changed = True
-        if pack.get("keywords"):
+        if not (row.keywords or "").strip() and pack.get("keywords"):
             row.keywords = pack["keywords"]
             changed = True
     if changed:
