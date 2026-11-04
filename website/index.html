@@ -75,6 +75,54 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet" />
+    <!-- LocalBusiness + Review schema (static for crawlers; same id is refreshed by Layout → globalSchemas.js) -->
+    <script type="application/ld+json" id="global-seo-ld-1">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": "https://tebpestcontrol.com/#localbusiness",
+        "name": "TEB Enterprises – Team Experts Bangalore",
+        "alternateName": "Teb Pest Control",
+        "url": "https://tebpestcontrol.com/",
+        "image": "https://tebpestcontrol.com/gmb-office.png",
+        "logo": "https://tebpestcontrol.com/logo.png",
+        "telephone": "+917996688885",
+        "email": "sales@teamcleaningexperts.in",
+        "priceRange": "₹₹",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Varthur, Devasthanagalu",
+          "addressLocality": "Bengaluru",
+          "addressRegion": "Karnataka",
+          "postalCode": "560087",
+          "addressCountry": "IN"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 12.938948000316907,
+          "longitude": 77.74119803558223
+        },
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "08:00",
+          "closes": "20:00"
+        },
+        "areaServed": { "@type": "City", "name": "Bangalore" },
+        "sameAs": [
+          "https://www.facebook.com/tebenterprises/?locale=fr_FR",
+          "https://www.instagram.com/tebenterprises1/",
+          "https://share.google/eW8mqyNEjn8Ke8QPs"
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": 4.8,
+          "bestRating": 5.0,
+          "worstRating": 1.0,
+          "reviewCount": 2749
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -29,40 +29,50 @@ export function buildGlobalSchemas() {
     ].filter(Boolean),
   }
 
-  // LocalBusiness + AggregateRating = Local Business + Review schema (Google-valid)
+  // LocalBusiness + AggregateRating = Local Business + Review schema (Google-valid).
+  // A static copy lives in index.html (id="global-seo-ld-1") — keep both in sync.
   const localBusiness = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: 'Teb Pest Control',
-    alternateName: 'TEB Enterprises',
+    '@id': 'https://tebpestcontrol.com/#localbusiness',
+    name: 'TEB Enterprises – Team Experts Bangalore',
+    alternateName: 'Teb Pest Control',
     url: 'https://tebpestcontrol.com/',
-    image: 'https://tebpestcontrol.com/logo.png',
+    image: 'https://tebpestcontrol.com/gmb-office.png',
     logo: 'https://tebpestcontrol.com/logo.png',
-    telephone: '+91-79966-88885',
+    telephone: '+917996688885',
+    email: SITE.salesEmail,
     priceRange: '₹₹',
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Varthur, Devasthanagalu, Bengaluru',
-      postalCode: '560087',
+      streetAddress: 'Varthur, Devasthanagalu',
+      addressLocality: 'Bengaluru',
       addressRegion: 'Karnataka',
+      postalCode: '560087',
       addressCountry: 'IN',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 12.9398,
-      longitude: 77.7412,
+      latitude: 12.938948000316907,
+      longitude: 77.74119803558223,
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '08:00',
+      closes: '20:00',
     },
     areaServed: {
       '@type': 'City',
       name: 'Bangalore',
     },
-    sameAs: [GMB_URL, SITE.social.facebook, SITE.social.instagram].filter(Boolean),
+    sameAs: [SITE.social.facebook, SITE.social.instagram, GMB_URL].filter(Boolean),
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      bestRating: '5.0',
-      worstRating: '1.0',
-      reviewCount: '2749',
+      ratingValue: 4.8,
+      bestRating: 5.0,
+      worstRating: 1.0,
+      reviewCount: 2749,
     },
   }
 
