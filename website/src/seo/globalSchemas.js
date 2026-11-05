@@ -3,8 +3,8 @@ import { SITE } from '../data/content'
 
 /**
  * Site-wide JSON-LD for every page (injected in Layout → document <head>).
- * Organization + LocalBusiness (with AggregateRating as review schema).
- * Matches client SEO doc; LocalBusiness used instead of invalid Book+rating type.
+ * Organization + LocalBusiness (Local schema) + Book/AggregateRating (Review schema).
+ * Matches client SEO doc: Review and Local schema are separate scripts.
  */
 export function buildGlobalSchemas() {
   const organization = {
@@ -29,20 +29,16 @@ export function buildGlobalSchemas() {
     ].filter(Boolean),
   }
 
-  // LocalBusiness + AggregateRating = Local Business + Review schema (Google-valid).
-  // A static copy lives in index.html (id="global-seo-ld-1") — keep both in sync.
+  // Local schema — static copy in index.html (id="global-seo-ld-1"); keep both in sync.
   const localBusiness = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': 'https://tebpestcontrol.com/#localbusiness',
     name: 'TEB Enterprises – Team Experts Bangalore',
-    alternateName: 'Teb Pest Control',
-    url: 'https://tebpestcontrol.com/',
     image: 'https://tebpestcontrol.com/gmb-office.png',
-    logo: 'https://tebpestcontrol.com/logo.png',
+    url: 'https://tebpestcontrol.com/',
     telephone: '+917996688885',
     email: SITE.salesEmail,
-    priceRange: '₹₹',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Varthur, Devasthanagalu',
@@ -62,11 +58,14 @@ export function buildGlobalSchemas() {
       opens: '08:00',
       closes: '20:00',
     },
-    areaServed: {
-      '@type': 'City',
-      name: 'Bangalore',
-    },
-    sameAs: [SITE.social.facebook, SITE.social.instagram, GMB_URL].filter(Boolean),
+    sameAs: [SITE.social.facebook, SITE.social.instagram],
+  }
+
+  // Review schema — static copy in index.html (id="global-seo-ld-2"); keep both in sync.
+  const review = {
+    '@context': 'http://schema.org',
+    '@type': 'Book',
+    name: 'Teb Pest Control',
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: 4.8,
@@ -76,5 +75,5 @@ export function buildGlobalSchemas() {
     },
   }
 
-  return [organization, localBusiness]
+  return [organization, localBusiness, review]
 }
