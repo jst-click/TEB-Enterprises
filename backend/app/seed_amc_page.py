@@ -13,6 +13,11 @@ def p(text: str) -> str:
     return f"<p>{text}</p>"
 
 
+# Bump to push the default meta title/description over admin edits once.
+SEO_VERSION = 1
+# Bump to replace stored AMC FAQs with the defaults below once.
+FAQ_VERSION = 1
+
 DEFAULT_SECTIONS: list[dict] = [
     {
         "key": "hero",
@@ -200,6 +205,7 @@ DEFAULT_SECTIONS: list[dict] = [
         "label": "7. FAQ",
         "sort_order": 70,
         "data": {
+            "faq_version": FAQ_VERSION,
             "eyebrow": "Common questions",
             "title": "AMC FAQs",
             "items": [
@@ -263,6 +269,7 @@ DEFAULT_SECTIONS: list[dict] = [
         "label": "9. SEO",
         "sort_order": 90,
         "data": {
+            "seo_version": SEO_VERSION,
             "meta_title": "Pest control AMC Bangalore: Explore Year-Round Protection",
             "meta_description": (
                 "Pest control AMC Bangalore helps keep pests at bay. Explore scheduled treatments, "
@@ -299,16 +306,21 @@ def seed_amc_page(db: Session, *, force: bool = False) -> None:
                 row.label = item["label"]
                 row.sort_order = item["sort_order"]
                 changed = True
-            # Refresh FAQ / SEO when curated pack grows
+            # Refresh FAQ / SEO only when their version is bumped (admin edits are kept)
             if item["key"] in ("faq", "seo"):
                 try:
                     current = json.loads(row.data or "{}")
-                    new_items = (item["data"].get("items") or []) if item["key"] == "faq" else []
-                    old_items = (current.get("items") or []) if item["key"] == "faq" else []
-                    if item["key"] == "faq" and len(new_items) > len(old_items):
+                    if item["key"] == "faq" and "faq_version" not in current:
+                        # Existing data predates versioning: stamp it, keep admin edits
+                        current["faq_version"] = FAQ_VERSION
+                        row.data = json.dumps(current, ensure_ascii=False)
+                        changed = True
+                    elif item["key"] == "faq" and int(current.get("faq_version") or 0) < FAQ_VERSION:
+                        # One-time refresh when the default FAQ pack is bumped
                         row.data = json.dumps(item["data"], ensure_ascii=False)
                         changed = True
-                    elif item["key"] == "seo" and item["data"].get("meta_title") != current.get("meta_title"):
+                    elif item["key"] == "seo" and int(current.get("seo_version") or 0) < SEO_VERSION:
+                        # One-time refresh when the default SEO pack is bumped; admin edits keep seo_version
                         row.data = json.dumps(item["data"], ensure_ascii=False)
                         changed = True
                 except json.JSONDecodeError:

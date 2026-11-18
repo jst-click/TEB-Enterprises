@@ -116,8 +116,8 @@ export default function AmcPage() {
   const seo = section(sections, 'seo')
 
   const faqItems = useMemo(() => {
-    const cms = faq.items || []
-    if (cms.length >= AMC_SEO.faqs.length) {
+    const cms = (faq.items || []).filter((item) => (item.question || item.q)?.trim())
+    if (cms.length > 0) {
       return cms.map((item) => ({
         question: item.question || item.q,
         answer: item.answer || item.a,
@@ -155,8 +155,8 @@ export default function AmcPage() {
   return (
     <>
       <SeoHead
-        title={AMC_SEO.title || seo.meta_title}
-        description={AMC_SEO.description || seo.meta_description}
+        title={seo.meta_title?.trim() || AMC_SEO.title}
+        description={seo.meta_description?.trim() || AMC_SEO.description}
         path={AMC_SEO.path}
         image={AMC_SEO.image}
         keywords={AMC_SEO.keywords}
